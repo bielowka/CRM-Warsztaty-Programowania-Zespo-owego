@@ -19,8 +19,21 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter")
+	implementation("org.springframework.boot:spring-boot-starter-web")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+	runtimeOnly("com.h2database:h2")
+
+	implementation("jakarta.validation:jakarta.validation-api")
+	implementation("jakarta.annotation:jakarta.annotation-api")
+
+	compileOnly("org.projectlombok:lombok")
+	annotationProcessor("org.projectlombok:lombok")
+	testCompileOnly("org.projectlombok:lombok")
+	testAnnotationProcessor("org.projectlombok:lombok")
 }
 
 tasks.withType<Test> {
