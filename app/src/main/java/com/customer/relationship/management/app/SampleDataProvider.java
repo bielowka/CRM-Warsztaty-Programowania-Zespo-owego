@@ -1,8 +1,8 @@
 package com.customer.relationship.management.app;
 
-import com.customer.relationship.management.app.model.User;
-import com.customer.relationship.management.app.model.UserRole;
-import com.customer.relationship.management.app.repository.UserRepository;
+import com.customer.relationship.management.app.users.User;
+import com.customer.relationship.management.app.users.UserRole;
+import com.customer.relationship.management.app.users.UserRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 

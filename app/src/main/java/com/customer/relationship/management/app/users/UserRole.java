@@ -1,4 +1,4 @@
-package com.customer.relationship.management.app.model;
+package com.customer.relationship.management.app.users;
 
 public enum UserRole {
     ADMIN,

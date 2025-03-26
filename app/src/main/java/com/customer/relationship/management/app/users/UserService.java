@@ -1,7 +1,5 @@
-package com.customer.relationship.management.app.service;
+package com.customer.relationship.management.app.users;
 
-import com.customer.relationship.management.app.model.User;
-import com.customer.relationship.management.app.repository.UserRepository;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.stereotype.Service;
 

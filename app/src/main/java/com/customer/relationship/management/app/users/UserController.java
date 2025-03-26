@@ -1,7 +1,5 @@
-package com.customer.relationship.management.app.controller;
+package com.customer.relationship.management.app.users;
 
-import com.customer.relationship.management.app.model.User;
-import com.customer.relationship.management.app.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
