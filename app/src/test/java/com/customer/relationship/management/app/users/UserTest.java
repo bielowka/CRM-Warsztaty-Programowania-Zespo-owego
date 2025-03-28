@@ -6,21 +6,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserTest {
 
+    private final User testUser = TestUserUtils.getTestUser();
+
     @Test
     void shouldBeActiveByDefault() {
-        User newUser = new User();
-        assertTrue(newUser.isActive());
+        assertTrue(testUser.isActive());
     }
 
     @Test
     void shouldHaveCreatedDate() {
-        User newUser = new User();
-        assertNotNull(newUser.getCreatedAt());
+        assertNotNull(testUser.getCreatedAt());
     }
 
     @Test
     void shouldHaveUpdatedDate() {
-        User newUser = new User();
-        assertNotNull(newUser.getUpdatedAt());
+        assertNotNull(testUser.getUpdatedAt());
     }
 }
