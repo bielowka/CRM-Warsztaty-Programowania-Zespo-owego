@@ -1,6 +1,6 @@
 package com.customer.relationship.management.app.accounts;
 
-enum AccountStatus {
+public enum AccountStatus {
     ACTIVE,
     INACTIVE,
     SUSPENDED

@@ -1,15 +1,25 @@
 package com.customer.relationship.management.app.accounts;
 
+import com.customer.relationship.management.app.users.User;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
 @Entity
 @Table(name = "accounts")
-class Account {
+@Getter
+@Setter
+public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
