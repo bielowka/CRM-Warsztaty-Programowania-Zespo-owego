@@ -1,4 +1,4 @@
-package com.customer.relationship.management.app.model;
+package com.customer.relationship.management.app.users;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "users")
 @Data
-public class User {
+class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

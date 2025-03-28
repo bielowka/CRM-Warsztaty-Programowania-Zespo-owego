@@ -1,4 +1,4 @@
-package com.customer.relationship.management.app.model;
+package com.customer.relationship.management.app.users;
 
 import org.junit.jupiter.api.Test;
 

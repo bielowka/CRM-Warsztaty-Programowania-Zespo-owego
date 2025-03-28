@@ -1,4 +1,4 @@
-package com.customer.relationship.management.app.model;
+package com.customer.relationship.management.app.users;
 
 public final class TestUserUtils {
     public static User getTestUser() {
