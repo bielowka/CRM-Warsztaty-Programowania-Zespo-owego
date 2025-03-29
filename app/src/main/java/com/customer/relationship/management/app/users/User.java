@@ -2,14 +2,17 @@ package com.customer.relationship.management.app.users;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
-@Data
-class User {
+@Getter
+@Setter
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
