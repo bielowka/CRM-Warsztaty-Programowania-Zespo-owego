@@ -3,3 +3,4 @@ frontend/.idea
 frontend/node_modules
 data
 app/.idea
+.DS_Store
