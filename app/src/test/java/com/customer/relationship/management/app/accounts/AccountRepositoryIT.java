@@ -1,8 +1,8 @@
 package com.customer.relationship.management.app.accounts;
 
-import com.customer.relationship.management.app.TestEntitiesUtils;
 import com.customer.relationship.management.app.users.User;
 import com.customer.relationship.management.app.users.UserRepository;
+import com.customer.relationship.management.app.users.UsersFixture;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,38 +35,73 @@ public class AccountRepositoryIT {
     @Test
     void oneUserCanHaveMultipleAccounts() {
         // Given
-        User user = TestEntitiesUtils.getTestUser("a@a");
-        userRepository.save(user);
-
-        Account accountA = TestEntitiesUtils.getTestAccount(user, "accountA@a");
-        Account accountB = TestEntitiesUtils.getTestAccount(user, "accountB@a");
+        User user = UsersFixture.getTestUser("a@a");
+        Account accountA = AccountsFixture.getTestAccount(user, "accountA@a");
+        Account accountB = AccountsFixture.getTestAccount(user, "accountB@a");
+        user.setAccounts(List.of(accountA, accountB));
 
         // When
-        accountRepository.saveAll(List.of(accountA, accountB));
+        userRepository.save(user);
 
         // Then
         List<Account> accounts = accountRepository.findAll();
         assertEquals(2, accounts.size());
+        List<User> users = userRepository.findAll();
+        assertEquals(1, users.size());
+        assertEquals(2, users.getFirst().getAccounts().size());
     }
 
     @Test
     void accountsAreReturnedByUser() {
         // Given
-        User userA = TestEntitiesUtils.getTestUser("a@a");
-        User userB = TestEntitiesUtils.getTestUser("b@b");
+        User userA = UsersFixture.getTestUser("a@a");
+        User userB = UsersFixture.getTestUser("b@b");
+        Account accountA = AccountsFixture.getTestAccount(userA, "accountA@a");
+        Account accountB = AccountsFixture.getTestAccount(userB,"accountB@b");
+
+        userA.setAccounts(List.of(accountA));
+        userB.setAccounts(List.of(accountB));
+
         userRepository.saveAll(List.of(userA, userB));
-
-        Account accountA = TestEntitiesUtils.getTestAccount(userA, "accountA@a");
-        Account accountB = TestEntitiesUtils.getTestAccount(userB, "accountB@b");
-
-        accountRepository.saveAll(List.of(accountA, accountB));
 
         // When
         List<User> users = userRepository.findAll();
-        List<Account> accounts = accountRepository.findAllByUserId(userA.getId());
 
         // Then
         assertEquals(2, users.size());
+        assertEquals(1, users.get(0).getAccounts().size());
+        assertEquals(1, users.get(1).getAccounts().size());
+    }
+
+    @Test
+    void canCreateAccountWithoutUser() {
+        // Given
+        Account account = AccountsFixture.getTestAccount(null, "accountA@a");
+
+        // When
+        accountRepository.save(account);
+
+        // Then
+        List<Account> accounts = accountRepository.findAll();
         assertEquals(1, accounts.size());
+    }
+
+    @Test
+    void canChangeUserForAccount() {
+        // Given
+        User userA = UsersFixture.getTestUser("a@a");
+        User userB = UsersFixture.getTestUser("b@b");
+        Account account = AccountsFixture.getTestAccount(userA, "accountA@a");
+
+        userRepository.saveAll(List.of(userA, userB));
+
+        // When
+        account.setUser(userB);
+        accountRepository.save(account);
+
+        // Then
+        List<Account> accounts = accountRepository.findAll();
+        assertEquals(1, accounts.size());
+        assertEquals(userB.getEmail(), accounts.getFirst().getUser().getEmail());
     }
 }

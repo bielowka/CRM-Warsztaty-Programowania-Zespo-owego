@@ -8,31 +8,32 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class UserService {
+class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+
+    UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User createUser(User user) {
+    User createUser(User user) {
         user.setPassword(encodePassword(user.getPassword()));
         return userRepository.save(user);
     }
 
-    public List<User> getAllUsers() {
+    List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public User getUserById(Long id) {
+    User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
     }
 
-    public User updateUser(Long id, User userDetails) {
+    User updateUser(Long id, User userDetails) {
         User user = getUserById(id);
 
         user.setFirstName(userDetails.getFirstName());
@@ -49,7 +50,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public void deleteUser(Long id) {
+    void deleteUser(Long id) {
         User user = getUserById(id);
         userRepository.delete(user);
     }
