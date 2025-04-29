@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/*
+TODO: I REALLY miss tests for user module.
+ */
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -17,6 +20,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    // TODO: here DB entity is returned - this should be avoided!
     @PostMapping
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
         User createdUser = userService.createUser(user);
