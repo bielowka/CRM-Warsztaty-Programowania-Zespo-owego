@@ -31,7 +31,7 @@ public class UserService {
     public User updateUser(Long id, User userDetails) {
         User user = getUserById(id);
 
-
+        // TODO: this can be extracted and moved into static factory method in User class
         user.setFirstName(userDetails.getFirstName());
         user.setLastName(userDetails.getLastName());
         user.setEmail(userDetails.getEmail());
