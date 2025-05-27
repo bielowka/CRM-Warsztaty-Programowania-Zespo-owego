@@ -20,6 +20,9 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.security:spring-security-config:6.4.4")
+	implementation("org.springframework.security:spring-security-core:6.4.4")
+	implementation("org.springframework.security:spring-security-web:6.4.4")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
