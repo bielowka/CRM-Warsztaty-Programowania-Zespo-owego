@@ -13,14 +13,4 @@ class UserTest {
     void shouldBeActiveByDefault() {
         assertTrue(testUser.isActive());
     }
-
-    @Test
-    void shouldHaveCreatedDate() {
-        assertNotNull(testUser.getCreatedAt());
-    }
-
-    @Test
-    void shouldHaveUpdatedDate() {
-        assertNotNull(testUser.getUpdatedAt());
-    }
 }
