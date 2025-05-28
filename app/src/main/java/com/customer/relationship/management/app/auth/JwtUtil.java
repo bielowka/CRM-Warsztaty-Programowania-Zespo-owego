@@ -32,11 +32,15 @@ public class JwtUtil {
                 .compact();
     }
 
-    public Claims validateToken(String token) {
+    public Claims validateToken(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Invalid token format");
+        }
+
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
-                .parseClaimsJws(token.replace("Bearer ", ""))
+                .parseClaimsJws(authHeader.replace("Bearer ", ""))
                 .getBody();
     }
 } 

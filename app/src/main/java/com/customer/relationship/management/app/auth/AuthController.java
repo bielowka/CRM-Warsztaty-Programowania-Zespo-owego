@@ -1,6 +1,7 @@
 package com.customer.relationship.management.app.auth;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,11 +17,15 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok(authService.login(loginRequest));
+        try {
+            return ResponseEntity.ok(authService.login(loginRequest));
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(401).build();
+        }
     }
 
     @PostMapping("/validate")
-    public ResponseEntity<AuthResponse> validateToken(@RequestHeader("Authorization") String token) {
-        return ResponseEntity.ok(authService.validateToken(token));
+    public ResponseEntity<AuthResponse> validateToken(@RequestHeader("Authorization") String authHeader) {
+        return ResponseEntity.ok(authService.validateToken(authHeader));
     }
 } 

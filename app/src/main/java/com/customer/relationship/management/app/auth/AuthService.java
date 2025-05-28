@@ -28,16 +28,16 @@ public class AuthService {
         }
 
         String token = jwtUtil.generateToken(user);
-        return buildAuthResponse(user, token, true);
+        return buildAuthResponse(user, token);
     }
 
-    public AuthResponse validateToken(String token) {
+    public AuthResponse validateToken(String authHeader) {
         try {
-            Claims claims = jwtUtil.validateToken(token);
+            Claims claims = jwtUtil.validateToken(authHeader);
             User user = userRepository.findByEmail(claims.getSubject())
                     .orElseThrow(() -> new BadCredentialsException("User not found"));
             
-            return buildAuthResponse(user, token, true);
+            return buildAuthResponse(user, authHeader);
         } catch (Exception e) {
             return AuthResponse.builder()
                     .authenticated(false)
@@ -45,7 +45,7 @@ public class AuthService {
         }
     }
 
-    private AuthResponse buildAuthResponse(User user, String token, boolean authenticated) {
+    private AuthResponse buildAuthResponse(User user, String token) {
         return AuthResponse.builder()
                 .token(token)
                 .userId(user.getId())
@@ -53,7 +53,7 @@ public class AuthService {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .role(user.getRole())
-                .authenticated(authenticated)
+                .authenticated(true)
                 .build();
     }
 } 
