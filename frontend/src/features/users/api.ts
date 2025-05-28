@@ -1,11 +1,11 @@
-import axios from 'axios';
+import api from '../../config/axios';
 import { User } from './types';
 
 export const fetchUsers = async (): Promise<User[]> => {
-    const res = await axios.get('http://localhost:8080/api/users');
+    const res = await api.get('/api/users');
     return res.data;
 };
 
 export const deleteUser = async (id: number) => {
-    return axios.delete(`http://localhost:8080/api/users/${id}`);
+    return api.delete(`/api/users/${id}`);
 };

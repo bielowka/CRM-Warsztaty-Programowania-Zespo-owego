@@ -5,6 +5,7 @@ import { useUsers, useDeleteUser } from '../features/users/hooks';
 import { User } from '../features/users/types';
 import UserTable from '../components/UserTable';
 import DeleteUserDialog from '../components/DeleteUserDialog';
+import Sidebar from '../components/Sidebar';
 
 export default function UsersPage() {
     const [openModal, setOpenModal] = useState(false);
@@ -26,23 +27,26 @@ export default function UsersPage() {
     };
 
     return (
-        <Box sx={{ padding: 3 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 4 }}>
-                <Typography variant="h5" fontWeight={600}>Users List</Typography>
-                <Button variant="contained" startIcon={<AddIcon />}>Add new user</Button>
+        <Box sx={{ display: 'flex', height: '100vh' }}>
+            <Sidebar />
+            <Box sx={{ flex: 1, padding: 3, overflow: 'auto' }}>
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 4 }}>
+                    <Typography variant="h5" fontWeight={600}>Users List</Typography>
+                    <Button variant="contained" startIcon={<AddIcon />}>Add new user</Button>
+                </Box>
+
+                {isLoading ? (
+                    <CircularProgress />
+                ) : (
+                    <UserTable data={userData} onDelete={handleDelete} />
+                )}
+
+                <DeleteUserDialog
+                    open={openModal}
+                    onClose={() => setOpenModal(false)}
+                    onConfirm={confirmDelete}
+                />
             </Box>
-
-            {isLoading ? (
-                <CircularProgress />
-            ) : (
-                <UserTable data={userData} onDelete={handleDelete} />
-            )}
-
-            <DeleteUserDialog
-                open={openModal}
-                onClose={() => setOpenModal(false)}
-                onConfirm={confirmDelete}
-            />
         </Box>
     );
 }
