@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchUsers, deleteUser, createUser, updateUser } from './api';
+import { fetchUsers, deleteUser, createUser, updateUser, changePassword } from './api';
 import { User } from './types';
 
 export const useUsers = () => {
@@ -36,5 +36,14 @@ export const useUpdateUser = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['users'] });
         },
+    });
+};
+
+export const useChangePassword = () => {
+    return useMutation({
+        mutationFn: changePassword,
+        onError: (error) => {
+            throw error;
+        }
     });
 };

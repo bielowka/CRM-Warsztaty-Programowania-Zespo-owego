@@ -34,3 +34,10 @@ export const updateUser = async ({ id, ...userData }: {
     const res = await api.put(`/api/users/${id}`, userData);
     return res.data;
 };
+
+export const changePassword = async (data: {
+    currentPassword: string;
+    newPassword: string;
+}): Promise<void> => {
+    await api.post('/api/users/change-password', data);
+};
