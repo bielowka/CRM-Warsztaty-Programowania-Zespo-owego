@@ -1,6 +1,7 @@
 package com.customer.relationship.management.app.users;
 
 import org.hibernate.ObjectNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,9 +10,11 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User createUser(User user) {
@@ -30,7 +33,6 @@ public class UserService {
 
     public User updateUser(Long id, User userDetails) {
         User user = getUserById(id);
-
 
         user.setFirstName(userDetails.getFirstName());
         user.setLastName(userDetails.getLastName());
@@ -52,6 +54,6 @@ public class UserService {
     }
 
     private String encodePassword(String rawPassword) {
-        return rawPassword;
+        return passwordEncoder.encode(rawPassword);
     }
 }

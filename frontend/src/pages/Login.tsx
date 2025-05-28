@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Box, Paper, Typography, TextField, Button, Container } from '@mui/material';
+import { Box, Paper, Typography, TextField, Button, Container, CircularProgress } from '@mui/material';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -60,6 +60,7 @@ const Login: React.FC = () => {
             required
             autoComplete="email"
             fullWidth
+            disabled={isLoading}
           />
 
           <TextField
@@ -71,6 +72,7 @@ const Login: React.FC = () => {
             required
             autoComplete="current-password"
             fullWidth
+            disabled={isLoading}
           />
 
           {error && (
@@ -85,8 +87,25 @@ const Login: React.FC = () => {
             disabled={isLoading}
             fullWidth
             size="large"
+            sx={{
+              position: 'relative',
+              height: 42
+            }}
           >
-            {isLoading ? 'Logging in...' : 'Log In'}
+            {isLoading ? (
+              <CircularProgress
+                size={24}
+                sx={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  marginTop: '-12px',
+                  marginLeft: '-12px'
+                }}
+              />
+            ) : (
+              'Log In'
+            )}
           </Button>
         </Paper>
       </Container>

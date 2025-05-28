@@ -7,18 +7,19 @@ import {
 } from '@tanstack/react-table';
 import { Box, IconButton, Pagination } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import EditIcon from '@mui/icons-material/Edit';
 import { useState } from 'react';
 import { User } from '../features/users/types';
 
 interface Props {
     data: User[];
     onDelete: (user: User) => void;
+    onEdit: (user: User) => void;
 }
 
 const columnHelper = createColumnHelper<User>();
 
-export default function UserTable({ data, onDelete }: Props) {
+export default function UserTable({ data, onDelete, onEdit }: Props) {
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 8 });
 
     const columns = [
@@ -26,6 +27,7 @@ export default function UserTable({ data, onDelete }: Props) {
         columnHelper.accessor('lastName', { header: 'Last Name' }),
         columnHelper.accessor('email', { header: 'Email' }),
         columnHelper.accessor('role', { header: 'Role' }),
+        columnHelper.accessor('position', { header: 'Position' }),
         {
             id: 'actions',
             header: 'Actions',
@@ -33,8 +35,12 @@ export default function UserTable({ data, onDelete }: Props) {
                 const user = row.original;
                 return (
                     <Box sx={{ display: 'flex', gap: 1 }}>
-                        <IconButton size="small" sx={{ color: 'black' }}>
-                            <VisibilityIcon fontSize="small" />
+                        <IconButton
+                            size="small"
+                            sx={{ color: 'black' }}
+                            onClick={() => onEdit(user)}
+                        >
+                            <EditIcon fontSize="small" />
                         </IconButton>
                         <IconButton
                             size="small"
