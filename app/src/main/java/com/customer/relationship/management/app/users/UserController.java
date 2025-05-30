@@ -3,6 +3,7 @@ package com.customer.relationship.management.app.users;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,5 +44,15 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changeOwnPassword(
+            Authentication authentication,
+            @RequestBody ChangePasswordRequest request
+    ) {
+        String email = (String) authentication.getPrincipal();
+        userService.changeUserPassword(email, request.getCurrentPassword(), request.getNewPassword());
+        return ResponseEntity.ok().build();
     }
 }

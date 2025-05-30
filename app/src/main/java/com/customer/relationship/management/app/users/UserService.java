@@ -1,6 +1,8 @@
 package com.customer.relationship.management.app.users;
 
-import org.hibernate.ObjectNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,9 +11,11 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User createUser(User user) {
@@ -25,12 +29,11 @@ public class UserService {
 
     public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new ObjectNotFoundException(new Object(), "User not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
     }
 
     public User updateUser(Long id, User userDetails) {
         User user = getUserById(id);
-
 
         user.setFirstName(userDetails.getFirstName());
         user.setLastName(userDetails.getLastName());
@@ -52,6 +55,18 @@ public class UserService {
     }
 
     private String encodePassword(String rawPassword) {
-        return rawPassword;
+        return passwordEncoder.encode(rawPassword);
+    }
+
+    public void changeUserPassword(String email, String currentPassword, String newPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new BadCredentialsException("Current password is incorrect");
+        }
+
+        user.setPassword(encodePassword(newPassword));
+        userRepository.save(user);
     }
 }
