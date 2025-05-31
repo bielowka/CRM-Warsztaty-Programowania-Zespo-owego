@@ -50,7 +50,6 @@ public class User {
     @Column(name = "updated_at", nullable = false, columnDefinition = "TIMESTAMP")
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-    private LocalDateTime updatedAt = LocalDateTime.now();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<Account> accounts = new ArrayList<>();

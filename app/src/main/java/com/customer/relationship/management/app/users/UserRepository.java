@@ -17,11 +17,13 @@ public interface UserRepository extends Repository<User, Long> {
 
     List<User> saveAll(Iterable<User> entities);
 
+    long count();
+
     Optional<User> findByEmail(String email);
 }
 
 class InMemoryUserRepository implements UserRepository {
-    private Map<Long, User> users = new HashMap<>();
+    private final Map<Long, User> users = new HashMap<>();
 
     @Override
     public User save(User user) {
@@ -58,9 +60,13 @@ class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public Optional<User> findByEmail(String email) {
-        return users.values().stream().filter(user -> user.getEmail() == email)
-                .findFirst();
+    public long count() {
+        return users.size();
     }
 
+    @Override
+    public Optional<User> findByEmail(String email) {
+        return users.values().stream().filter(user -> Objects.equals(user.getEmail(), email))
+                .findFirst();
+    }
 }
