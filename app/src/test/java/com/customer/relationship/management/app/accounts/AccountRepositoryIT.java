@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class AccountRepositoryIT {
@@ -20,10 +20,15 @@ public class AccountRepositoryIT {
     @Autowired
     private UserRepository userRepository;
 
+    private User testUser;
+
     @BeforeEach
     void setUp() {
         accountRepository.deleteAll();
         userRepository.deleteAll();
+
+        testUser = TestEntitiesUtils.getTestUser("test@example.com");
+        userRepository.save(testUser);
     }
 
     @AfterEach
@@ -35,18 +40,16 @@ public class AccountRepositoryIT {
     @Test
     void oneUserCanHaveMultipleAccounts() {
         // Given
-        User user = TestEntitiesUtils.getTestUser("a@a");
-        userRepository.save(user);
-
-        Account accountA = TestEntitiesUtils.getTestAccount(user, "accountA@a");
-        Account accountB = TestEntitiesUtils.getTestAccount(user, "accountB@a");
+        Account accountA = TestEntitiesUtils.getTestAccount(testUser, "accountA@a");
+        Account accountB = TestEntitiesUtils.getTestAccount(testUser, "accountB@a");
 
         // When
         accountRepository.saveAll(List.of(accountA, accountB));
 
         // Then
-        List<Account> accounts = accountRepository.findAll();
+        List<Account> accounts = accountRepository.findAllByUserId(testUser.getId());
         assertEquals(2, accounts.size());
+        assertTrue(accounts.stream().allMatch(account -> account.getUser().getId().equals(testUser.getId())));
     }
 
     @Test
@@ -58,15 +61,43 @@ public class AccountRepositoryIT {
 
         Account accountA = TestEntitiesUtils.getTestAccount(userA, "accountA@a");
         Account accountB = TestEntitiesUtils.getTestAccount(userB, "accountB@b");
-
         accountRepository.saveAll(List.of(accountA, accountB));
 
         // When
-        List<User> users = userRepository.findAll();
-        List<Account> accounts = accountRepository.findAllByUserId(userA.getId());
+        List<Account> accountsForUserA = accountRepository.findAllByUserId(userA.getId());
 
         // Then
-        assertEquals(2, users.size());
-        assertEquals(1, accounts.size());
+        assertEquals(1, accountsForUserA.size());
+        assertEquals(accountA.getEmail(), accountsForUserA.getFirst().getEmail());
+    }
+
+    @Test
+    void findAllByAccountStatus_ShouldReturnMatchingAccounts() {
+        // Given
+        Account activeAccount = TestEntitiesUtils.getTestAccount(testUser, "active@example.com");
+        activeAccount.setAccountStatus(AccountStatus.ACTIVE);
+
+        Account inactiveAccount = TestEntitiesUtils.getTestAccount(testUser, "inactive@example.com");
+        inactiveAccount.setAccountStatus(AccountStatus.INACTIVE);
+
+        Account suspendedAccount = TestEntitiesUtils.getTestAccount(testUser, "suspended@example.com");
+        suspendedAccount.setAccountStatus(AccountStatus.SUSPENDED);
+
+        accountRepository.saveAll(List.of(activeAccount, inactiveAccount, suspendedAccount));
+
+        // When
+        List<Account> activeAccounts = accountRepository.findAllByAccountStatusAndUserId(AccountStatus.ACTIVE, testUser.getId());
+        List<Account> inactiveAccounts = accountRepository.findAllByAccountStatusAndUserId(AccountStatus.INACTIVE, testUser.getId());
+        List<Account> suspendedAccounts = accountRepository.findAllByAccountStatusAndUserId(AccountStatus.SUSPENDED, testUser.getId());
+
+        // Then
+        assertEquals(1, activeAccounts.size());
+        assertEquals(activeAccount.getEmail(), activeAccounts.getFirst().getEmail());
+
+        assertEquals(1, inactiveAccounts.size());
+        assertEquals(inactiveAccount.getEmail(), inactiveAccounts.getFirst().getEmail());
+
+        assertEquals(1, suspendedAccounts.size());
+        assertEquals(suspendedAccount.getEmail(), suspendedAccounts.getFirst().getEmail());
     }
 }

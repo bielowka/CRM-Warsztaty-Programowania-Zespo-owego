@@ -50,4 +50,16 @@ public class AccountController {
         accountService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/user/{userId}")
+    public List<Account> getAccountsByUserId(@PathVariable Long userId) {
+        return accountService.findAllByUserId(userId);
+    }
+
+    @GetMapping("/user/{userId}/status/{accountStatus}")
+    public List<Account> getAccountsByStatusAndUserId(
+            @PathVariable Long userId,
+            @PathVariable AccountStatus accountStatus) {
+        return accountService.findAllByAccountStatusAndUserId(accountStatus, userId);
+    }
 }

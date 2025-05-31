@@ -23,10 +23,21 @@ public class AccountService {
     }
 
     public Account save(Account account) {
+        if (account.getUser() == null) {
+            throw new IllegalArgumentException("Account must have an associated user");
+        }
         return accountRepository.save(account);
     }
 
     public void deleteById(Long id) {
         accountRepository.deleteById(id);
+    }
+
+    public List<Account> findAllByUserId(Long userId) {
+        return accountRepository.findAllByUserId(userId);
+    }
+
+    public List<Account> findAllByAccountStatusAndUserId(AccountStatus accountStatus, Long userId) {
+        return accountRepository.findAllByAccountStatusAndUserId(accountStatus, userId);
     }
 }
