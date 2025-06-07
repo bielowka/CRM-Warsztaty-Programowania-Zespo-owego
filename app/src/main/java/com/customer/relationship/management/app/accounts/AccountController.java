@@ -11,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/accounts")
 @CrossOrigin(origins = "http://localhost:5173")
-public class AccountController {
+class AccountController {
 
     private final AccountService accountService;
 
@@ -21,7 +21,7 @@ public class AccountController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
-    public List<Account> getAllAccounts() {
+    public List<AccountInfo> getAllAccounts() {
         return accountService.findAll();
     }
 
@@ -35,13 +35,13 @@ public class AccountController {
 
     @GetMapping("/user/{userId}")
     @PreAuthorize("@accountSecurity.canAccessUserAccounts(authentication, #userId)")
-    public List<Account> getAccountsByUserId(@PathVariable Long userId) {
+    public List<AccountInfo> getAccountsByUserId(@PathVariable Long userId) {
         return accountService.findAllByUserId(userId);
     }
 
     @GetMapping("/user/{userId}/status/{status}")
     @PreAuthorize("@accountSecurity.canAccessUserAccounts(authentication, #userId)")
-    public List<Account> getAccountsByUserIdAndStatus(
+    public List<AccountInfo> getAccountsByUserIdAndStatus(
             @PathVariable Long userId,
             @PathVariable AccountStatus status) {
         return accountService.findAllByAccountStatusAndUserId(status, userId);

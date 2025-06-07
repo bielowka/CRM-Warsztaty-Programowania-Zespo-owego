@@ -27,25 +27,63 @@ class AccountServiceTest {
 
     private Account testAccount;
 
+    private AccountInfo testAccountInfo;
+
     @BeforeEach
     void setUp() {
         User testUser = TestEntitiesUtils.getTestUser("test@example.com");
-        testAccount = TestEntitiesUtils.getTestAccount(testUser, "account@example.com");
+        testAccount = AccountsFixture.getTestAccount(testUser, "account@example.com");
         testAccount.setId(1L);
+        testAccountInfo = new AccountInfo() {
+
+            @Override
+            public Long getId() {
+                return testAccount.getId();
+            }
+
+            @Override
+            public String getFirstName() {
+                return testAccount.getFirstName();
+            }
+
+            @Override
+            public String getLastName() {
+                return testAccount.getLastName();
+            }
+
+            @Override
+            public String getEmail() {
+                return testAccount.getEmail();
+            }
+
+            @Override
+            public AccountStatus getAccountStatus() {
+                return testAccount.getAccountStatus();
+            }
+
+            @Override
+            public String getPhoneNumber() {
+                return testAccount.getPhoneNumber();
+            }
+
+            @Override
+            public String getCompanyName() {
+                return "ABC Corp";
+            }
+        };
     }
 
     @Test
     void findAll_ShouldReturnAllAccounts() {
         // Given
-        List<Account> expectedAccounts = Collections.singletonList(testAccount);
-        when(accountRepository.findAll()).thenReturn(expectedAccounts);
+        List<AccountInfo> expectedAccounts = Collections.singletonList(testAccountInfo);
+        when(accountRepository.findAllBy()).thenReturn(expectedAccounts);
 
         // When
-        List<Account> actualAccounts = accountService.findAll();
+        List<AccountInfo> actualAccounts = accountService.findAll();
 
         // Then
         assertEquals(expectedAccounts, actualAccounts);
-        verify(accountRepository).findAll();
     }
 
     @Test

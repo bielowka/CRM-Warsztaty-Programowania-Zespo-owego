@@ -1,9 +1,8 @@
-package com.customer.relationship.management.app.config.security;
+package com.customer.relationship.management.app.accounts;
 
-import com.customer.relationship.management.app.accounts.Account;
-import com.customer.relationship.management.app.accounts.AccountService;
 import com.customer.relationship.management.app.users.User;
 import com.customer.relationship.management.app.users.UserRole;
+import com.customer.relationship.management.app.users.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,8 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,6 +22,9 @@ class AccountSecurityEvaluatorTest {
 
     @Mock
     private AccountService accountService;
+
+    @Mock
+    private UserService userService;
 
     @Mock
     private Authentication authentication;
@@ -136,60 +136,39 @@ class AccountSecurityEvaluatorTest {
     }
 
     @Test
-    void canAccessUserAccounts_WithSalespersonOwningAccounts_ShouldReturnTrue() {
+    void canAccessUserAccounts_WithSalespersonForOwnUserId_ShouldReturnTrue() {
         // Given
         mockUserRole(UserRole.SALESPERSON);
         when(authentication.getName()).thenReturn(SALESPERSON_EMAIL);
 
-        Account account = new Account();
         User user = new User();
         user.setEmail(SALESPERSON_EMAIL);
-        account.setUser(user);
 
-        when(accountService.findAllByUserId(USER_ID)).thenReturn(List.of(account));
+        when(userService.getUserById(USER_ID)).thenReturn(user);
 
         // When
         boolean result = securityEvaluator.canAccessUserAccounts(authentication, USER_ID);
 
         // Then
         assertTrue(result);
-        verify(accountService).findAllByUserId(USER_ID);
     }
 
     @Test
-    void canAccessUserAccounts_WithSalespersonNotOwningAccounts_ShouldReturnFalse() {
+    void canAccessUserAccounts_WithSalespersonForOtherUserId_ShouldReturnFalse() {
         // Given
         mockUserRole(UserRole.SALESPERSON);
         when(authentication.getName()).thenReturn(SALESPERSON_EMAIL);
 
-        Account account = new Account();
         User user = new User();
         user.setEmail("other@example.com");
-        account.setUser(user);
 
-        when(accountService.findAllByUserId(USER_ID)).thenReturn(List.of(account));
-
-        // When
-        boolean result = securityEvaluator.canAccessUserAccounts(authentication, USER_ID);
-
-        // Then
-        assertFalse(result);
-        verify(accountService).findAllByUserId(USER_ID);
-    }
-
-    @Test
-    void canAccessUserAccounts_WithNoAccounts_ShouldReturnFalse() {
-        // Given
-        mockUserRole(UserRole.SALESPERSON);
-        when(authentication.getName()).thenReturn(SALESPERSON_EMAIL);
-        when(accountService.findAllByUserId(USER_ID)).thenReturn(Collections.emptyList());
+        when(userService.getUserById(USER_ID)).thenReturn(user);
 
         // When
         boolean result = securityEvaluator.canAccessUserAccounts(authentication, USER_ID);
 
         // Then
         assertFalse(result);
-        verify(accountService).findAllByUserId(USER_ID);
     }
 
     @Test

@@ -1,22 +1,20 @@
-package com.customer.relationship.management.app.config.security;
+package com.customer.relationship.management.app.accounts;
 
-import com.customer.relationship.management.app.accounts.Account;
-import com.customer.relationship.management.app.accounts.AccountService;
 import com.customer.relationship.management.app.users.UserRole;
+import com.customer.relationship.management.app.users.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 @Component("accountSecurity")
-public class AccountSecurityEvaluator {
+@RequiredArgsConstructor
+class AccountSecurityEvaluator {
 
     private final AccountService accountService;
+    private final UserService userService;
 
-    public AccountSecurityEvaluator(AccountService accountService) {
-        this.accountService = accountService;
-    }
-
-    public boolean canCreateAccount(Authentication authentication, Account account) {
+    boolean canCreateAccount(Authentication authentication, Account account) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return false;
         }
@@ -34,7 +32,7 @@ public class AccountSecurityEvaluator {
         return false;
     }
 
-    public boolean canAccessAccount(Authentication authentication, Long accountId) {
+    boolean canAccessAccount(Authentication authentication, Long accountId) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return false;
         }
@@ -53,7 +51,7 @@ public class AccountSecurityEvaluator {
         return false;
     }
 
-    public boolean canAccessUserAccounts(Authentication authentication, Long userId) {
+    boolean canAccessUserAccounts(Authentication authentication, Long userId) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return false;
         }
@@ -64,10 +62,7 @@ public class AccountSecurityEvaluator {
 
         if (hasRole(authentication, UserRole.SALESPERSON)) {
             String userEmail = authentication.getName();
-            return accountService.findAllByUserId(userId).stream()
-                .findFirst()
-                .map(account -> account.getUser().getEmail().equals(userEmail))
-                .orElse(false);
+            return userService.getUserById(userId).getEmail().equals(userEmail);
         }
 
         return false;

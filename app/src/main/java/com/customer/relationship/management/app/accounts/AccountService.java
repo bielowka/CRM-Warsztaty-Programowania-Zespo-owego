@@ -1,21 +1,19 @@
 package com.customer.relationship.management.app.accounts;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class AccountService {
+@RequiredArgsConstructor
+class AccountService {
 
     private final AccountRepository accountRepository;
 
-    public AccountService(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
-    }
-
-    public List<Account> findAll() {
-        return accountRepository.findAll();
+    public List<AccountInfo> findAll() {
+        return accountRepository.findAllBy();
     }
 
     public Optional<Account> findById(Long id) {
@@ -33,11 +31,11 @@ public class AccountService {
         accountRepository.deleteById(id);
     }
 
-    public List<Account> findAllByUserId(Long userId) {
+    public List<AccountInfo> findAllByUserId(Long userId) {
         return accountRepository.findAllByUserId(userId);
     }
 
-    public List<Account> findAllByAccountStatusAndUserId(AccountStatus accountStatus, Long userId) {
+    public List<AccountInfo> findAllByAccountStatusAndUserId(AccountStatus accountStatus, Long userId) {
         return accountRepository.findAllByAccountStatusAndUserId(accountStatus, userId);
     }
 }
