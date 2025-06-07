@@ -51,7 +51,7 @@ public class UserController {
             Authentication authentication,
             @RequestBody ChangePasswordRequest request
     ) {
-        String email = (String) authentication.getPrincipal();
+        String email = authentication.getName();
         userService.changeUserPassword(email, request.getCurrentPassword(), request.getNewPassword());
         return ResponseEntity.ok().build();
     }
