@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "notes")
 // TODO: extend in its own task
-public class Note {
+class Note {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

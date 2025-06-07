@@ -4,7 +4,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface AccountRepository extends JpaRepository<Account, Long> {
+interface AccountRepository extends JpaRepository<Account, Long> {
 
-    List<Account> findAllByUserId(Long userId);
+    List<AccountInfo> findAllBy();
+
+    List<AccountInfo> findAllByUserId(Long userId);
+
+    List<AccountInfo> findAllByAccountStatusAndUserId(AccountStatus accountStatus, Long userId);
 }
