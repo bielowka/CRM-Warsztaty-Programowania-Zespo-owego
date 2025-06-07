@@ -14,7 +14,7 @@ class AccountSecurityEvaluator {
     private final AccountService accountService;
     private final UserService userService;
 
-    boolean canCreateAccount(Authentication authentication, Account account) {
+    public boolean canCreateAccount(Authentication authentication, Account account) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return false;
         }
@@ -32,7 +32,7 @@ class AccountSecurityEvaluator {
         return false;
     }
 
-    boolean canAccessAccount(Authentication authentication, Long accountId) {
+    public boolean canAccessAccount(Authentication authentication, Long accountId) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return false;
         }
@@ -51,7 +51,7 @@ class AccountSecurityEvaluator {
         return false;
     }
 
-    boolean canAccessUserAccounts(Authentication authentication, Long userId) {
+    public boolean canAccessUserAccounts(Authentication authentication, Long userId) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return false;
         }

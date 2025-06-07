@@ -1,6 +1,7 @@
 package com.customer.relationship.management.app.accounts;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,13 +12,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/accounts")
 @CrossOrigin(origins = "http://localhost:5173")
+@RequiredArgsConstructor
 class AccountController {
 
     private final AccountService accountService;
-
-    public AccountController(AccountService accountService) {
-        this.accountService = accountService;
-    }
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
