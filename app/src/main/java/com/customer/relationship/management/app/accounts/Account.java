@@ -1,5 +1,6 @@
 package com.customer.relationship.management.app.accounts;
 
+import com.customer.relationship.management.app.teams.Team;
 import com.customer.relationship.management.app.users.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import java.util.List;
 @Table(name = "accounts")
 @Getter
 @Setter
-class Account {
+public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,16 +31,16 @@ class Account {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @ManyToOne
-    @JoinColumn(name = "address_id")
-    private Address address;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "account_status", nullable = false)
     private AccountStatus accountStatus;
 
     @Column(name = "phone_number", nullable = false)
     private String phoneNumber;
+
+    @ManyToOne
+    @JoinColumn(name = "team_id")
+    private Team team;
 
     @ManyToOne
     @JoinColumn(name = "company_id")

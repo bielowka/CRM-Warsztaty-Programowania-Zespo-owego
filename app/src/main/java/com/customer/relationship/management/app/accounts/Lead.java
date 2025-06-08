@@ -1,11 +1,16 @@
 package com.customer.relationship.management.app.accounts;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "leads")
-// TODO: extend in its own task
-class Lead {
+@Getter
+@Setter
+public class Lead {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,7 +19,13 @@ class Lead {
     @Column(nullable = false)
     private String description;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private LeadStatus status = LeadStatus.NEW;
+
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
+
+    private BigDecimal estimatedValue;
 }
