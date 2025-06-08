@@ -1,6 +1,6 @@
 package com.customer.relationship.management.app.sales;
 
-import com.customer.relationship.management.app.accounts.Account;
+import com.customer.relationship.management.app.users.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,7 +19,7 @@ public class Sale {
 
     @ManyToOne
     @JoinColumn(name = "sales_rep_id", nullable = false)
-    private Account salesRep;
+    private User salesRep;
 
     @Column(nullable = false)
     private BigDecimal amount;

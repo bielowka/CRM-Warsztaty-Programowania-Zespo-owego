@@ -39,10 +39,6 @@ public class Account {
     private String phoneNumber;
 
     @ManyToOne
-    @JoinColumn(name = "team_id")
-    private Team team;
-
-    @ManyToOne
     @JoinColumn(name = "company_id")
     private Company company;
 

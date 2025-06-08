@@ -1,6 +1,6 @@
 package com.customer.relationship.management.app.teams;
 
-import com.customer.relationship.management.app.accounts.Account;
+import com.customer.relationship.management.app.users.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,6 +20,6 @@ public class Team {
     private String name;
 
     @OneToMany(mappedBy = "team")
-    private List<Account> members = new ArrayList<>();
+    private List<User> members = new ArrayList<>();
 
 }

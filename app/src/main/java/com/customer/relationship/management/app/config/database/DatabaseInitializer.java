@@ -68,90 +68,43 @@ public class DatabaseInitializer implements CommandLineRunner {
 
         userRepository.saveAll(Arrays.asList(salesRep1, salesRep2, salesRep3, salesRep4, salesRep5, salesRep6, salesRep7, salesRep8, salesRep9, salesRep10, salesRep11, salesRep12));
 
-        Account account1 = createAccount(salesRep1.getFirstName(), salesRep1.getLastName(), salesRep1.getEmail(), "+1 555-9012", AccountStatus.ACTIVE, salesRep1);
-        Account account2 = createAccount(salesRep2.getFirstName(), salesRep2.getLastName(), salesRep2.getEmail(), "+1 555-9012", AccountStatus.ACTIVE, salesRep2);
-        Account account3 = createAccount(salesRep3.getFirstName(), salesRep3.getLastName(), salesRep3.getEmail(), "+1 555-9012", AccountStatus.ACTIVE, salesRep3);
-        Account account4 = createAccount(salesRep4.getFirstName(), salesRep4.getLastName(), salesRep4.getEmail(), "+1 555-9012", AccountStatus.ACTIVE, salesRep4);
-        Account account5 = createAccount(salesRep5.getFirstName(), salesRep5.getLastName(), salesRep5.getEmail(), "+1 555-9012", AccountStatus.ACTIVE, salesRep5);
-        Account account6 = createAccount(salesRep6.getFirstName(), salesRep6.getLastName(), salesRep6.getEmail(), "+1 555-9012", AccountStatus.ACTIVE, salesRep6);
-        Account account7 = createAccount(salesRep7.getFirstName(), salesRep7.getLastName(), salesRep7.getEmail(), "+1 555-9012", AccountStatus.ACTIVE, salesRep7);
-        Account account8 = createAccount(salesRep8.getFirstName(), salesRep8.getLastName(), salesRep8.getEmail(), "+1 555-9012", AccountStatus.ACTIVE, salesRep8);
-        Account account9 = createAccount(salesRep9.getFirstName(), salesRep9.getLastName(), salesRep9.getEmail(), "+1 555-9012", AccountStatus.ACTIVE, salesRep9);
-        Account account10 = createAccount(salesRep10.getFirstName(), salesRep10.getLastName(), salesRep10.getEmail(), "+1 555-9012", AccountStatus.ACTIVE, salesRep10);
-        Account account11 = createAccount(salesRep11.getFirstName(), salesRep11.getLastName(), salesRep11.getEmail(), "+1 555-9012", AccountStatus.ACTIVE, salesRep11);
-        Account account12 = createAccount(salesRep12.getFirstName(), salesRep12.getLastName(), salesRep12.getEmail(), "+1 555-9012", AccountStatus.ACTIVE, salesRep12);
+
+        Team teamAlpha = createTeam("Alpha Team", Arrays.asList(salesRep1, salesRep2));
+        Team teamBeta = createTeam("Beta Team", Arrays.asList(salesRep3, salesRep4));
+        Team teamGamma = createTeam("Gamma Team", Arrays.asList(salesRep5, salesRep6));
+        Team teamDelta = createTeam("Delta Team", Arrays.asList(salesRep7, salesRep8));
+        Team teamEpsilon = createTeam("Epsilon Team", Arrays.asList(salesRep9, salesRep10));
+        Team teamZeta = createTeam("Zeta Team", Arrays.asList(salesRep11, salesRep12));
 
 
-        Team teamAlpha = createTeam("Alpha Team", Arrays.asList(account1, account2));
-        Team teamBeta = createTeam("Beta Team", Arrays.asList(account3, account4));
-        Team teamGamma = createTeam("Gamma Team", Arrays.asList(account5, account6));
-        Team teamDelta = createTeam("Delta Team", Arrays.asList(account7, account8));
-        Team teamEpsilon = createTeam("Epsilon Team", Arrays.asList(account9, account10));
-        Team teamZeta = createTeam("Zeta Team", Arrays.asList(account11, account12));
+        salesRep1.setTeam(teamAlpha);
+        salesRep2.setTeam(teamAlpha);
 
+        salesRep3.setTeam(teamBeta);
+        salesRep4.setTeam(teamBeta);
 
-        account1.setTeam(teamAlpha);
-        account2.setTeam(teamAlpha);
+        salesRep5.setTeam(teamGamma);
+        salesRep6.setTeam(teamGamma);
 
-        account3.setTeam(teamBeta);
-        account4.setTeam(teamBeta);
+        salesRep7.setTeam(teamDelta);
+        salesRep8.setTeam(teamDelta);
 
-        account5.setTeam(teamGamma);
-        account6.setTeam(teamGamma);
+        salesRep9.setTeam(teamEpsilon);
+        salesRep10.setTeam(teamEpsilon);
 
-        account7.setTeam(teamDelta);
-        account8.setTeam(teamDelta);
-
-        account9.setTeam(teamEpsilon);
-        account10.setTeam(teamEpsilon);
-
-        account11.setTeam(teamZeta);
-        account12.setTeam(teamZeta);
+        salesRep11.setTeam(teamZeta);
+        salesRep12.setTeam(teamZeta);
 
         teamRepository.saveAll(Arrays.asList(
                 teamAlpha, teamBeta, teamGamma, teamDelta, teamEpsilon, teamZeta
         ));
 
-        accountRepository.saveAll(Arrays.asList(
-                account1, account2, account3, account4,
-                account5, account6, account7, account8,
-                account9, account10, account11, account12
-        ));
 
-        List<Account> salesRep = accountRepository.saveAll(Arrays.asList(account1, account2, account3, account4, account5, account6, account7, account8, account9, account10, account11, account12));
+        List<User> salesRep = userRepository.saveAll(Arrays.asList(salesRep1, salesRep2, salesRep3, salesRep4, salesRep5, salesRep6, salesRep7, salesRep8, salesRep9, salesRep10, salesRep11, salesRep12));
         generateFullSalesData(salesRep);
 
 
-        // Deale dla Mike'a Johnsona (salesRep1)
-        createSale(account1, 48000.0, LocalDateTime.of(2025, Month.JANUARY, 15, 10, 0));
-        createSale(account1, 32000.0, LocalDateTime.of(2025, Month.JANUARY, 22, 14, 30));
-        createSale(account1, 37000.0, LocalDateTime.of(2025, Month.FEBRUARY, 5, 11, 15));
-
-        // Deale dla Sarah Williams (salesRep2)
-        createSale(account2, 82000.0, LocalDateTime.of(2025, Month.JANUARY, 10, 9, 0));
-        createSale(account2, 15000.0, LocalDateTime.of(2025, Month.FEBRUARY, 12, 16, 45));
-
-        // Deale dla Toma Browna (salesRep3)
-        createSale(account3, 46000.0, LocalDateTime.of(2025, Month.JANUARY, 28, 13, 20));
-        createSale(account3, 25000.0, LocalDateTime.of(2025, Month.FEBRUARY, 15, 10, 30));
-
-        // Deale dla Emily Davis (salesRep4)
-        createSale(account4, 31000.0, LocalDateTime.of(2025, Month.FEBRUARY, 8, 11, 0));
-        createSale(account4, 42000.0, LocalDateTime.of(2025, Month.FEBRUARY, 20, 14, 0));
-
         userRepository.saveAll(users);
-    }
-
-    private Account createAccount(String firstName, String lastName, String email, String phone,
-                                  AccountStatus status, User user) {
-        Account account = new Account();
-        account.setFirstName(firstName);
-        account.setLastName(lastName);
-        account.setEmail(email);
-        account.setPhoneNumber(phone);
-        account.setAccountStatus(status);
-        account.setUser(user);
-        return account;
     }
 
     private User createUser(String firstName, String lastName, String email, String password, UserRole role, String position) {
@@ -166,14 +119,14 @@ public class DatabaseInitializer implements CommandLineRunner {
         return user;
     }
 
-    private Team createTeam(String name, List<Account> members) {
+    private Team createTeam(String name, List<User> members) {
         Team team = new Team();
         team.setName(name);
         team.setMembers(members);
         return team;
     }
 
-    private void createSale(Account salesRep, double amount,
+    private void createSale(User salesRep, double amount,
                             LocalDateTime closeDate) {
         Sale sale = new Sale();
         sale.setSalesRep(salesRep);
@@ -182,11 +135,11 @@ public class DatabaseInitializer implements CommandLineRunner {
         saleRepository.save(sale);
     }
 
-    private void generateFullSalesData(List<Account> salesReps) {
+    private void generateFullSalesData(List<User> salesReps) {
         int startYear = 2024;
         int endYear = 2025;
 
-        for (Account salesRep : salesReps) {
+        for (User salesRep : salesReps) {
             for (int year = startYear; year <= endYear; year++) {
                 int startMonth = (year == startYear) ? 1 : 1;
                 int endMonth = (year == endYear) ? 6 : 12;

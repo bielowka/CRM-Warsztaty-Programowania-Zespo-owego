@@ -8,10 +8,10 @@ import java.util.List;
 
 public interface SaleRepository extends JpaRepository<Sale, Long> {
 
-    @Query("SELECT s.salesRep.user.id, SUM(s.amount), COUNT(s) " +
+    @Query("SELECT s.salesRep.id, SUM(s.amount), COUNT(s) " +
             "FROM Sale s " +
             "WHERE YEAR(s.closeDate) = :year AND MONTH(s.closeDate) = :month " +
-            "GROUP BY s.salesRep.user.id")
+            "GROUP BY s.salesRep.id")
     List<Object[]> findSalesPerformance(@Param("year") int year, @Param("month") int month);
 
 
