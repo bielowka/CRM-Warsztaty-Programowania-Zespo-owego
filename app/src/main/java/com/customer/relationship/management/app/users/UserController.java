@@ -26,9 +26,12 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public List<UserDTO> getAllUsers() {
+        return userService.getAllUsers().stream()
+                .map(UserDTO::new)
+                .toList();
     }
+
 
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id) {
@@ -36,7 +39,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable Long id, @Valid @RequestBody User userDetails) {
+    public UserDTO updateUser(@PathVariable Long id, @Valid @RequestBody User userDetails) {
         return userService.updateUser(id, userDetails);
     }
 

@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface LeadRepository extends JpaRepository<Lead, Long> {
     List<Lead> findByAccountUser(User user);
+    List<Lead> findByAccount(Account account);
 }

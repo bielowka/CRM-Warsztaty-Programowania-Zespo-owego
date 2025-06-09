@@ -1,5 +1,6 @@
 package com.customer.relationship.management.app.sales;
 
+import com.customer.relationship.management.app.users.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,4 +27,6 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
             @Param("year") int year,
             @Param("month") int month
     );
+
+    List<Sale> findBySalesRep(User user);
 }

@@ -82,12 +82,12 @@ export default function Sidebar() {
 
                     <Divider sx={{my: 2}}/>
 
-                    {user?.role !== UserRole.ADMIN && (
-                        <ListItemButton onClick={() => setOpenPasswordDialog(true)}>
-                            <ListItemIcon><KeyIcon/></ListItemIcon>
-                            <ListItemText primary="Change Password"/>
-                        </ListItemButton>
-                    )}
+
+                    <ListItemButton onClick={() => setOpenPasswordDialog(true)}>
+                        <ListItemIcon><KeyIcon/></ListItemIcon>
+                        <ListItemText primary="Change Password"/>
+                    </ListItemButton>
+
 
                     <ListItemButton onClick={handleLogout}>
                         <ListItemIcon><LogoutIcon/></ListItemIcon>
