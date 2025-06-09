@@ -45,23 +45,29 @@ public class UserService {
 
     public UserDTO updateUser(Long id, User userDetails) {
         User existing = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         existing.setFirstName(userDetails.getFirstName());
         existing.setLastName(userDetails.getLastName());
+        existing.setEmail(userDetails.getEmail());
         existing.setPosition(userDetails.getPosition());
         existing.setActive(userDetails.isActive());
         existing.setRole(userDetails.getRole());
+
+        if (userDetails.getPassword() != null && !userDetails.getPassword().isBlank()) {
+            existing.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+        }
 
         User updated = userRepository.save(existing);
         return new UserDTO(updated);
     }
 
 
+
     @Transactional
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
         // 1. Usuń sprzedaże powiązane z użytkownikiem
         List<Sale> sales = saleRepository.findBySalesRep(user);

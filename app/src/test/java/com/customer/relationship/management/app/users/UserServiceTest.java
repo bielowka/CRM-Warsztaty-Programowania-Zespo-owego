@@ -1,5 +1,8 @@
 package com.customer.relationship.management.app.users;
 
+import com.customer.relationship.management.app.accounts.AccountRepository;
+import com.customer.relationship.management.app.sales.SaleRepository;
+import com.customer.relationship.management.app.teams.TeamRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +27,12 @@ class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private AccountRepository accountRepository;
+    @Mock
+    private SaleRepository saleRepository;
+    @Mock
+    private TeamRepository teamRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -119,13 +128,13 @@ class UserServiceTest {
         when(userRepository.save(any(User.class))).thenReturn(testUser);
 
         // When
-        User updatedUser = userService.updateUser(1L, updatedDetails);
+        UserDTO updatedUser = userService.updateUser(1L, updatedDetails);
 
         // Then
         verify(userRepository).findById(1L);
         verify(passwordEncoder).encode("newPassword");
         verify(userRepository).save(testUser);
-        
+
         assertEquals(updatedDetails.getFirstName(), updatedUser.getFirstName());
         assertEquals(updatedDetails.getLastName(), updatedUser.getLastName());
         assertEquals(updatedDetails.getEmail(), updatedUser.getEmail());
@@ -133,6 +142,7 @@ class UserServiceTest {
         assertEquals(updatedDetails.getPosition(), updatedUser.getPosition());
         assertEquals(updatedDetails.isActive(), updatedUser.isActive());
     }
+
 
     @Test
     void updateUser_WithInvalidId_ShouldThrowException() {
