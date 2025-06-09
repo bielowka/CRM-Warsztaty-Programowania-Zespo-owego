@@ -26,14 +26,18 @@ public class DatabaseInitializer implements CommandLineRunner {
     private final TeamRepository teamRepository;
     private final AccountRepository accountRepository;
     private final SaleRepository saleRepository;
+    private final LeadRepository leadRepository;
+    private final CompanyRepository companyRepository;
 
     public DatabaseInitializer(UserRepository userRepository, PasswordEncoder passwordEncoder, TeamRepository teamRepository,
-                               AccountRepository accountRepository, SaleRepository saleRepository) {
+                               AccountRepository accountRepository, SaleRepository saleRepository, LeadRepository leadRepository, CompanyRepository companyRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.teamRepository = teamRepository;
         this.accountRepository = accountRepository;
         this.saleRepository = saleRepository;
+        this.leadRepository = leadRepository;
+        this.companyRepository = companyRepository;
 
     }
 
@@ -53,9 +57,9 @@ public class DatabaseInitializer implements CommandLineRunner {
                 createUser("Zofia", "Dąbrowska", "zofia@example.com", "password123", UserRole.SALESPERSON, "Design")
         );
 
-        User salesRep1 = createUser("Mike", "Johnson", "sales1@crm.com", passwordEncoder.encode("sales1"), UserRole.SALESPERSON, "Sales");
-        User salesRep2 = createUser("Sarah", "Williams", "sales2@crm.com", passwordEncoder.encode("sales2"), UserRole.SALESPERSON, "Sales");
-        User salesRep3 = createUser("Tom", "Brown", "sales3@crm.com", passwordEncoder.encode("sales3"), UserRole.SALESPERSON, "Sales");
+        User salesRep1 = createUser("Mike", "Johnson", "sales1@crm.com", "sales1", UserRole.SALESPERSON, "Sales");
+        User salesRep2 = createUser("Sarah", "Williams", "sales2@crm.com", "sales2", UserRole.SALESPERSON, "Sales");
+        User salesRep3 = createUser("Tom", "Brown", "sales3@crm.com", "sales3", UserRole.SALESPERSON, "Sales");
         User salesRep4 = createUser("Emily", "Davis", "sales4@crm.com", passwordEncoder.encode("sales4"), UserRole.SALESPERSON, "Sales");
         User salesRep5 = createUser("Daniel", "Miller", "sales5@crm.com", passwordEncoder.encode("sales5"), UserRole.SALESPERSON, "Sales");
         User salesRep6 = createUser("Olivia", "Garcia", "sales6@crm.com", passwordEncoder.encode("sales6"), UserRole.SALESPERSON, "Sales");
@@ -99,9 +103,22 @@ public class DatabaseInitializer implements CommandLineRunner {
                 teamAlpha, teamBeta, teamGamma, teamDelta, teamEpsilon, teamZeta
         ));
 
+        List<Company> companies = List.of(
+                Company.of("TechNova", "Technology"),
+                Company.of("HealthPlus", "Healthcare"),
+                Company.of("FinCore", "Finance"),
+                Company.of("EduSmart", "Education"),
+                Company.of("GreenLeaf", "Agriculture"),
+                Company.of("AutoMotiveX", "Automotive"),
+                Company.of("RetailHub", "Retail"),
+                Company.of("ConstructCo", "Construction")
+        );
+        companyRepository.saveAll(companies);
+
 
         List<User> salesRep = userRepository.saveAll(Arrays.asList(salesRep1, salesRep2, salesRep3, salesRep4, salesRep5, salesRep6, salesRep7, salesRep8, salesRep9, salesRep10, salesRep11, salesRep12));
         generateFullSalesData(salesRep);
+        generateAccountsAndLeadsForSalesReps(salesRep, companies);
 
 
         userRepository.saveAll(users);
@@ -165,6 +182,38 @@ public class DatabaseInitializer implements CommandLineRunner {
         int minute = (int) (Math.random() * 60);
         return LocalDateTime.of(year, month, day, hour, minute);
     }
+    private void generateAccountsAndLeadsForSalesReps(List<User> salesReps, List<Company> companies) {
+        for (User rep : salesReps) {
+            for (int i = 1; i <= 5; i++) {
+                Account account = new Account();
+                account.setUser(rep);
+                account.setFirstName("Client" + i);
+                account.setLastName("Rep" + rep.getId());
+                account.setEmail("client" + i + "_rep" + rep.getId() + "@example.com");
+                account.setPhoneNumber("500-600-70" + i);
+                account.setAccountStatus(AccountStatus.ACTIVE);
+                Company company = companies.get((int) (Math.random() * companies.size()));
+                account.setCompany(company);
+
+                accountRepository.save(account);
+
+                for (int j = 1; j <= 3; j++) {
+                    Lead lead = new Lead();
+                    lead.setAccount(account);
+                    String companyName = account.getCompany() != null ? account.getCompany().getName() : "Unknown Company";
+                    lead.setDescription("Potential deal " + j + " for " + companyName);
+                    lead.setEstimatedValue(BigDecimal.valueOf(5000 + Math.random() * 15000));
+                    // Losowy status
+                    LeadStatus[] statuses = LeadStatus.values();
+                    lead.setStatus(statuses[(int) (Math.random() * statuses.length)]);
+
+                    leadRepository.save(lead);
+                }
+            }
+        }
+    }
+
+
 
 }
 

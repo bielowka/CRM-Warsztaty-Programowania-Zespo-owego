@@ -1,10 +1,12 @@
 package com.customer.relationship.management.app.accounts;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
 @Entity
+@Getter
 @Table(name = "companies")
-class Company {
+public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -15,7 +17,7 @@ class Company {
     @Column(nullable = false)
     private String industry;
 
-    static Company of(String name, String industry) {
+    public static Company of(String name, String industry) {
         Company company = new Company();
         company.name = name;
         company.industry = industry;

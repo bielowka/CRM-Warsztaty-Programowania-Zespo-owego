@@ -1,34 +1,59 @@
 package com.customer.relationship.management.app.accounts;
 
+import com.customer.relationship.management.app.users.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class LeadService {
 
     private final LeadRepository leadRepository;
+    private final AccountRepository accountRepository;
 
-    public LeadService(LeadRepository leadRepository) {
+    public LeadService(LeadRepository leadRepository, AccountRepository accountRepository) {
         this.leadRepository = leadRepository;
+        this.accountRepository = accountRepository;
     }
 
     @Transactional
-    public Lead updateLeadStatus(Long leadId, UpdateLeadStatusDTO updateDTO) {
-        Lead lead = leadRepository.findById(leadId)
-                .orElseThrow(() -> new RuntimeException("Lead not found with id: " + leadId));
+    public Lead createLead(CreateLeadDTO createLeadDTO, User currentUser) {
+        Account account = accountRepository.findById(createLeadDTO.getAccountId())
+                .orElseThrow(() -> new RuntimeException("Account not found"));
 
-        // Możesz dodać logikę walidacji przejść między statusami
-        validateStatusTransition(lead.getStatus(), updateDTO.getStatus());
+        // Sprawdź czy konto należy do użytkownika
+        if (!account.getUser().getId().equals(currentUser.getId())) {
+            throw new SecurityException("You can only add leads to your own accounts");
+        }
 
-        lead.setStatus(updateDTO.getStatus());
+        Lead lead = new Lead();
+        lead.setDescription(createLeadDTO.getDescription());
+        lead.setStatus(createLeadDTO.getStatus() != null ? createLeadDTO.getStatus() : LeadStatus.NEW);
+        lead.setEstimatedValue(BigDecimal.valueOf(createLeadDTO.getEstimatedValue()));
+        lead.setAccount(account);
+
         return leadRepository.save(lead);
     }
 
-    private void validateStatusTransition(LeadStatus currentStatus, LeadStatus newStatus) {
-        // Przykładowa walidacja - blokuj bezpośrednie przejście z NEW na CLOSED
-        if (currentStatus == LeadStatus.NEW &&
-                (newStatus == LeadStatus.CLOSED_WON || newStatus == LeadStatus.CLOSED_LOST)) {
-            throw new IllegalStateException("Cannot close a new lead without proper qualification");
-        }
+    @Transactional(readOnly = true)
+    public List<Lead> getLeadsByUser(User user) {
+        return leadRepository.findByAccountUser(user);
     }
+
+    @Transactional(readOnly = true)
+    public List<Lead> getAllLeads() {
+        return leadRepository.findAll();
+    }
+
+    @Transactional
+    public void updateStatus(Long leadId, LeadStatus newStatus) {
+        Lead lead = leadRepository.findById(leadId)
+                .orElseThrow(() -> new RuntimeException("Lead not found with id: " + leadId));
+
+        lead.setStatus(newStatus);
+        leadRepository.save(lead);
+    }
+
 }

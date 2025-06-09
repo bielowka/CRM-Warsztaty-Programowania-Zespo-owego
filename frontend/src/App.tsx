@@ -8,6 +8,7 @@ import {UserRole} from './types/UserRole';
 import ReportsPage from "./pages/ReportsPage.tsx";
 import {Button, Typography} from "@mui/material";
 import {FC, JSX} from "react";
+import LeadsPage from "./pages/LeadsPage.tsx";
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const {isAuthenticated} = useAuth();
@@ -73,6 +74,11 @@ const App: FC = () => {
                     <Route path="/reports" element={
                         <ProtectedRoute allowedRoles={[UserRole.ADMIN, UserRole.MANAGER]}>
                             <ReportsPage/>
+                        </ProtectedRoute>
+                    }/>
+                    <Route path="/leads" element={
+                        <ProtectedRoute allowedRoles={[UserRole.SALESPERSON, UserRole.MANAGER]}>
+                            <LeadsPage/>
                         </ProtectedRoute>
                     }/>
                     <Route

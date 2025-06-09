@@ -1,5 +1,6 @@
 package com.customer.relationship.management.app.accounts;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +26,7 @@ public class Lead {
 
     @ManyToOne
     @JoinColumn(name = "account_id")
+    @JsonBackReference
     private Account account;
 
     private BigDecimal estimatedValue;

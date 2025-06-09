@@ -2,6 +2,8 @@ package com.customer.relationship.management.app.accounts;
 
 import com.customer.relationship.management.app.teams.Team;
 import com.customer.relationship.management.app.users.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,6 +47,7 @@ public class Account {
     @OneToMany(mappedBy = "account")
     private List<Note> notes;
 
+    @JsonManagedReference
     @OneToMany(mappedBy = "account")
     private List<Lead> leads;
 

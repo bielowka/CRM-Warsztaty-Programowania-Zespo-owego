@@ -1,12 +1,12 @@
 import {Box, Typography, List, ListItemButton, ListItemIcon, ListItemText, Badge, Divider} from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import FolderIcon from '@mui/icons-material/Folder';
-import AssignmentIcon from '@mui/icons-material/Assignment';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import PeopleIcon from '@mui/icons-material/People';
 import CubeIcon from '@mui/icons-material/ViewInAr';
 import LogoutIcon from '@mui/icons-material/Logout';
 import KeyIcon from '@mui/icons-material/Key';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext';
@@ -58,12 +58,12 @@ export default function Sidebar() {
                             <ListItemText primary="My Clients"/>
                         </ListItemButton>
                     )}
-                    {user?.role !== UserRole.ADMIN && (
-                        <ListItemButton>
+                    {(user?.role === UserRole.MANAGER || user?.role === UserRole.SALESPERSON) && (
+                        <ListItemButton onClick={() => navigate('/leads')}>
                             <ListItemIcon>
-                                <Badge badgeContent={10} color="primary"><AssignmentIcon/></Badge>
+                                <AttachMoneyIcon/>
                             </ListItemIcon>
-                            <ListItemText primary="Tasks"/>
+                            <ListItemText primary="Leads"/>
                         </ListItemButton>
                     )}
                     {user?.role === UserRole.ADMIN && (
