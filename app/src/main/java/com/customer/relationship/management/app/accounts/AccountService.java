@@ -1,5 +1,6 @@
 package com.customer.relationship.management.app.accounts;
 
+import com.customer.relationship.management.app.users.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -37,5 +38,8 @@ class AccountService {
 
     public List<AccountInfo> findAllByAccountStatusAndUserId(AccountStatus accountStatus, Long userId) {
         return accountRepository.findAllByAccountStatusAndUserId(accountStatus, userId);
+    }
+    public List<Account> getAccountsByUser(User user) {
+        return accountRepository.findByUser(user);
     }
 }

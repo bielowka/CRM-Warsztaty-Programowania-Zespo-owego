@@ -1,5 +1,6 @@
 package com.customer.relationship.management.app.users;
 
+import com.customer.relationship.management.app.teams.Team;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,6 +34,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
+
+    @ManyToOne
+    @JoinColumn(name = "team_id")
+    private Team team;
 
     @Column
     private String position;

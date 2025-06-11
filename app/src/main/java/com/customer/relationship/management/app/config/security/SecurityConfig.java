@@ -29,8 +29,11 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/leads").hasAnyRole(UserRole.SALESPERSON.name(), UserRole.MANAGER.name())
                         .requestMatchers("/api/users/change-password").authenticated()
-                        .requestMatchers("/api/users/**").hasRole(UserRole.ADMIN.name())
+                        .requestMatchers("/api/ranking/sales").hasAnyRole(UserRole.MANAGER.name())
+                        .requestMatchers("/api/reports/team-sales").hasAnyRole(UserRole.MANAGER.name())
+                        .requestMatchers("/api/users/**").hasAnyRole(UserRole.ADMIN.name())
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
