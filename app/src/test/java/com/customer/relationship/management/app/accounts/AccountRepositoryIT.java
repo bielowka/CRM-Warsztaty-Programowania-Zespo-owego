@@ -6,12 +6,14 @@ import com.customer.relationship.management.app.users.UserRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@ActiveProfiles("test")
 public class AccountRepositoryIT {
 
     @Autowired
@@ -29,8 +31,9 @@ public class AccountRepositoryIT {
     void setUp() {
         accountRepository.deleteAll();
         userRepository.deleteAll();
+        companyRepository.deleteAll();
 
-        testUser = TestEntitiesUtils.getTestUser("test@example.com");
+        testUser = TestEntitiesUtils.getTestUser("test-repo@example.com");
         userRepository.save(testUser);
     }
 
@@ -38,13 +41,14 @@ public class AccountRepositoryIT {
     void tearDown() {
         accountRepository.deleteAll();
         userRepository.deleteAll();
+        companyRepository.deleteAll();
     }
 
     @Test
     void oneUserCanHaveMultipleAccounts() {
         // Given
-        Account accountA = AccountsFixture.getTestAccount(testUser, "accountA@a");
-        Account accountB = AccountsFixture.getTestAccount(testUser, "accountB@a");
+        Account accountA = AccountsFixture.getTestAccount(testUser, "accountA@test.com");
+        Account accountB = AccountsFixture.getTestAccount(testUser, "accountB@test.com");
 
         // When
         accountRepository.saveAll(List.of(accountA, accountB));
@@ -62,12 +66,12 @@ public class AccountRepositoryIT {
     @Test
     void accountsAreReturnedByUser() {
         // Given
-        User userA = TestEntitiesUtils.getTestUser("a@a");
-        User userB = TestEntitiesUtils.getTestUser("b@b");
+        User userA = TestEntitiesUtils.getTestUser("userA@test.com");
+        User userB = TestEntitiesUtils.getTestUser("userB@test.com");
         userRepository.saveAll(List.of(userA, userB));
 
-        Account accountA = AccountsFixture.getTestAccount(userA, "accountA@a");
-        Account accountB = AccountsFixture.getTestAccount(userB, "accountB@b");
+        Account accountA = AccountsFixture.getTestAccount(userA, "accountA@test.com");
+        Account accountB = AccountsFixture.getTestAccount(userB, "accountB@test.com");
         accountRepository.saveAll(List.of(accountA, accountB));
 
         // When
@@ -122,6 +126,7 @@ public class AccountRepositoryIT {
         List<AccountInfo> accounts = accountRepository.findAllByUserId(testUser.getId());
 
         // Then
+        assertEquals(1, accounts.size());
         assertEquals("ABC Corp", accounts.getFirst().getCompanyName());
     }
 }

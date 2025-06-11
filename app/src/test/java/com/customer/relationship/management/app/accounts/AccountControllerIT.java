@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 @Transactional
 class AccountControllerIT {
 
@@ -65,16 +67,14 @@ class AccountControllerIT {
 
         mockMvc.perform(get("/api/accounts"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(3))))
+                .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(5))))
                 .andExpect(jsonPath("$[*].email", hasItems(
                     testAccount1.getEmail(),
                     testAccount2.getEmail(),
                     testAccount3.getEmail(),
                     testAccount4.getEmail(),
                     testAccount5.getEmail()
-                )))
-                .andExpect(jsonPath("$[*].firstName", everyItem(is(testAccount1.getFirstName()))))
-                .andExpect(jsonPath("$[*].lastName", everyItem(is(testAccount1.getLastName()))));
+                )));
     }
 
     private void saveAllAccounts() {

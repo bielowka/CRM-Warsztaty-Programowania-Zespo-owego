@@ -9,16 +9,17 @@ import com.customer.relationship.management.app.users.User;
 import com.customer.relationship.management.app.users.UserRepository;
 import com.customer.relationship.management.app.users.UserRole;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.Arrays;
 import java.util.List;
 
 @Component
+@Profile("!test")
 public class DatabaseInitializer implements CommandLineRunner {
 
     private final UserRepository userRepository;
