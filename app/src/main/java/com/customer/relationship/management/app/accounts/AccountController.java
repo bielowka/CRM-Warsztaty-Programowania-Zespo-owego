@@ -78,6 +78,25 @@ class AccountController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/team")
+    @PreAuthorize("hasRole('MANAGER')")
+    public ResponseEntity<List<AccountDTO>> getTeamAccounts(Authentication authentication) {
+        String email = authentication.getName();
+        User manager = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (manager.getTeam() == null) {
+            return ResponseEntity.ok(List.of());
+        }
+
+        List<Account> accounts = accountService.getAccountsByTeam(manager.getTeam());
+        List<AccountDTO> dtos = accounts.stream()
+                .map(AccountDTO::new)
+                .toList();
+
+        return ResponseEntity.ok(dtos);
+    }
+
     @GetMapping("/my")
     @PreAuthorize("hasRole('SALESPERSON')")
     public ResponseEntity<List<AccountDTO>> getMyAccounts(Authentication authentication) {

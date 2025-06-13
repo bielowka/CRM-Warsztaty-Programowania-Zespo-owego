@@ -3,28 +3,30 @@ import {
     Box,
     Typography,
     Paper,
-    Button,
+    Button
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { fetchMyAccounts } from '../api/accountsApi';
+import { fetchMyAccounts, fetchTeamAccounts } from '../api/accountsApi';
 import ClientTable from '../components/ClientTable';
 import AddClientDialog from '../components/AddClientDialog';
 import EditClientDialog from '../components/EditClientDialog';
 import { Client } from '../features/clients/types';
 import api from '../config/axios';
+import { useAuth } from '../context/AuthContext';
 
 const MyClientsPage: React.FC = () => {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
+    const { user } = useAuth();
     const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [selectedClient, setSelectedClient] = useState<Client | null>(null);
-    
-    const { data: accounts} = useQuery({
+
+    const { data: accounts } = useQuery({
         queryKey: ['my-accounts'],
-        queryFn: fetchMyAccounts,
+        queryFn: user?.role === 'MANAGER' ? fetchTeamAccounts : fetchMyAccounts,
     });
 
     const createAccountMutation = useMutation({
@@ -103,6 +105,7 @@ const MyClientsPage: React.FC = () => {
         lastName: string;
         email: string;
         phoneNumber: string;
+        companyName?: string;
     }) => {
         createAccountMutation.mutate(clientData);
         handleAddDialogClose();
@@ -135,7 +138,7 @@ const MyClientsPage: React.FC = () => {
         email: account.email,
         phoneNumber: account.phoneNumber,
         accountStatus: account.accountStatus,
-        user: { id: 0, email: '', firstName: '', lastName: '', role: 'SALESPERSON' }, // not uset int table so not loading this
+        user: { id: 0, email: '', firstName: '', lastName: '', role: 'SALESPERSON' }, // not used in table so not loading this
         address: { street: '', city: '', state: '', zipCode: '' },
         company: account.companyName ? { name: account.companyName, industry: '' } : undefined
     })) || [];
@@ -148,10 +151,12 @@ const MyClientsPage: React.FC = () => {
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                         <Box>
                             <Typography variant="h4" gutterBottom>
-                                My Clients
+                                {user?.role === 'MANAGER' ? 'Team Clients' : 'My Clients'}
                             </Typography>
                             <Typography variant="body1" color="text.secondary">
-                                Manage your client relationships and accounts
+                                {user?.role === 'MANAGER'
+                                    ? 'Manage your team\'s client relationships and accounts'
+                                    : 'Manage your client relationships and accounts'}
                             </Typography>
                         </Box>
                         <Button
