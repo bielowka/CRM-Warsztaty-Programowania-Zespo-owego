@@ -14,24 +14,6 @@ class AccountSecurityEvaluator {
     private final AccountService accountService;
     private final UserService userService;
 
-    public boolean canCreateAccount(Authentication authentication, Account account) {
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return false;
-        }
-
-        if (hasAnyRole(authentication, UserRole.ADMIN, UserRole.MANAGER)) {
-            return true;
-        }
-
-        if (hasRole(authentication, UserRole.SALESPERSON)) {
-            return account != null && 
-                   account.getUser() != null && 
-                   authentication.getName().equals(account.getUser().getEmail());
-        }
-
-        return false;
-    }
-
     public boolean canAccessAccount(Authentication authentication, Long accountId) {
         if (authentication == null || !authentication.isAuthenticated()) {
             return false;

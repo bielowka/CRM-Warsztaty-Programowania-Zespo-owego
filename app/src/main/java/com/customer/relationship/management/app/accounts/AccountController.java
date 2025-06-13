@@ -4,13 +4,14 @@ import com.customer.relationship.management.app.users.User;
 import com.customer.relationship.management.app.users.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/accounts")
@@ -50,21 +51,21 @@ class AccountController {
     }
 
     @PostMapping
-    @PreAuthorize("@accountSecurity.canCreateAccount(authentication, #account)")
-    public ResponseEntity<Account> createAccount(@Valid @RequestBody Account account) {
-        Account savedAccount = accountService.save(account);
-        return new ResponseEntity<>(savedAccount, HttpStatus.CREATED);
+    @PreAuthorize("hasRole('SALESPERSON')")
+    public ResponseEntity<Account> createAccount(@Valid @RequestBody CreateAccountDTO createAccountDTO) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return ResponseEntity.ok(accountService.createAccount(createAccountDTO, user));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("@accountSecurity.canAccessAccount(authentication, #id)")
-    public ResponseEntity<Account> updateAccount(@PathVariable Long id, @Valid @RequestBody Account updatedAccount) {
-        return accountService.findById(id)
-                .map(existing -> {
-                    updatedAccount.setId(id);
-                    return ResponseEntity.ok(accountService.save(updatedAccount));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Account> updateAccount(@PathVariable Long id, @Valid @RequestBody UpdateAccountDTO updateAccountDTO) {
+        Optional<Account> existingAccount = accountService.findById(id);
+        return existingAccount.map(account -> ResponseEntity.ok(accountService.updateAccount(account, updateAccountDTO)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")

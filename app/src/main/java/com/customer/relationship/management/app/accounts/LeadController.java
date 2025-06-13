@@ -7,9 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -42,47 +42,42 @@ public class LeadController {
     @PreAuthorize("hasRole('SALESPERSON')")
     public ResponseEntity<Void> updateLeadStatus(@PathVariable Long id, @RequestBody Map<String, String> body) {
         String newStatus = body.get("status");
-        leadService.updateStatus(id, LeadStatus.valueOf(newStatus));
+        LeadStatus status = LeadStatus.valueOf(newStatus);
+        leadService.updateStatus(id, status);
+
+        if (status == LeadStatus.CLOSED_WON) {
+            String email = SecurityContextHolder.getContext().getAuthentication().getName();
+            User currentUser = userRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            leadService.closeLeadAndCreateSale(id, currentUser);
+        }
+        
         return ResponseEntity.ok().build();
     }
 
     @GetMapping
     @PreAuthorize("hasRole('SALESPERSON') or hasRole('MANAGER')")
-    public ResponseEntity<List<LeadDTO>> getLeads(Authentication authentication) {
+    public ResponseEntity<LeadPageResponse> getLeads(
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDirection,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            Authentication authentication) {
         String email = authentication.getName();
         User currentUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        List<Lead> leads;
+        LeadPageResponse response;
 
         if (currentUser.getRole() == UserRole.SALESPERSON) {
-            leads = leadService.getLeadsByUser(currentUser);
+            response = leadService.getLeadsByUser(currentUser, sortBy, sortDirection, page, size);
         } else if (currentUser.getRole() == UserRole.MANAGER) {
-            leads = leadService.getAllLeads();
+            response = leadService.getAllLeads(sortBy, sortDirection, page, size);
         } else {
             return ResponseEntity.status(403).build();
         }
 
-        List<LeadDTO> dtoList = leads.stream().map(lead -> {
-            String companyName = null;
-            String companyIndustry = null;
-
-            if (lead.getAccount() != null && lead.getAccount().getCompany() != null) {
-                companyName = lead.getAccount().getCompany().getName();
-                companyIndustry = lead.getAccount().getCompany().getIndustry();
-            }
-
-            return new LeadDTO(
-                    lead.getId(),
-                    lead.getDescription(),
-                    lead.getStatus(),
-                    lead.getEstimatedValue(),
-                    companyName,
-                    companyIndustry
-            );
-        }).toList();
-
-        return ResponseEntity.ok(dtoList);
+        return ResponseEntity.ok(response);
     }
 
 

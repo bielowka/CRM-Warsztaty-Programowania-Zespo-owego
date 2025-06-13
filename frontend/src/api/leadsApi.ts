@@ -1,5 +1,7 @@
 import api from './../config/axios'
+import { Account } from './accountsApi';
 
+export type { Account };
 
 export interface Lead {
     id: number;
@@ -7,6 +9,10 @@ export interface Lead {
     status: LeadStatus;
     estimatedValue: number;
     probability: number;
+    companyName?: string;
+    companyIndustry?: string;
+    createdAt: string;
+    updatedAt: string;
     account: {
         id: number;
         firstName: string;
@@ -18,18 +24,15 @@ export interface Lead {
     };
 }
 
-export interface Account {
+export interface LeadForTable {
     id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phoneNumber: string;
-    accountStatus: AccountStatus;
-    company?: {
-        id: number;
-        name: string;
-        industry: string;
-    };
+    description: string;
+    status: string;
+    estimatedValue: number;
+    companyName?: string;
+    companyIndustry?: string;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export enum LeadStatus {
@@ -45,14 +48,45 @@ export enum LeadStatus {
     CLOSED_LOST = "CLOSED_LOST"
 }
 
-export enum AccountStatus {
-    ACTIVE = "ACTIVE",
-    PENDING = "PENDING",
-    INACTIVE = "INACTIVE"
+export interface SortOptions {
+    sortBy: string;
+    sortDirection: 'asc' | 'desc';
 }
 
-export const fetchLeads = async (): Promise<Lead[]> => {
-    const response = await api.get('api/leads');
+export interface PaginationOptions {
+    page: number;
+    size: number;
+}
+
+export interface LeadPageResponse {
+    content: LeadForTable[];
+    page: number;
+    size: number;
+    totalElements: number;
+    totalPages: number;
+    first: boolean;
+    last: boolean;
+    hasNext: boolean;
+    hasPrevious: boolean;
+}
+
+export const fetchLeads = async (
+    sortOptions?: SortOptions, 
+    paginationOptions?: PaginationOptions
+): Promise<LeadPageResponse> => {
+    const params = new URLSearchParams();
+    
+    if (sortOptions) {
+        params.append('sortBy', sortOptions.sortBy);
+        params.append('sortDirection', sortOptions.sortDirection);
+    }
+    
+    if (paginationOptions) {
+        params.append('page', paginationOptions.page.toString());
+        params.append('size', paginationOptions.size.toString());
+    }
+    
+    const response = await api.get(`/api/leads?${params.toString()}`);
     return response.data;
 };
 

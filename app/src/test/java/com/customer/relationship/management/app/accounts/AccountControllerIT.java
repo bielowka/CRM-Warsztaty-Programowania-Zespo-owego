@@ -43,6 +43,8 @@ class AccountControllerIT {
     private Account testAccount4;
     private Account testAccount5;
 
+    private CreateAccountDTO createAccountDTO;
+
     private User testUser;
 
     @BeforeEach
@@ -58,6 +60,14 @@ class AccountControllerIT {
         testAccount4 = AccountsFixture.getTestAccount(testUser, "account4@example.com");
         testAccount5 = AccountsFixture.getTestAccount(otherUser, "account5@example.com");
 
+        createAccountDTO = new CreateAccountDTO();
+        createAccountDTO.setFirstName(testAccount1.getFirstName());
+        createAccountDTO.setLastName(testAccount1.getLastName());
+        createAccountDTO.setEmail(testAccount1.getEmail());
+        createAccountDTO.setPhoneNumber(testAccount1.getPhoneNumber());
+        createAccountDTO.setAccountStatus(testAccount1.getAccountStatus());
+        createAccountDTO.setCompanyName("companyName");
+        createAccountDTO.setIndustry("industry");
     }
 
     @Test
@@ -130,58 +140,47 @@ class AccountControllerIT {
     }
 
     @Test
-    @WithMockUser(roles = "ADMIN")
-    void createAccount_AsAdmin_ShouldCreateAccount() throws Exception {
-        mockMvc.perform(post("/api/accounts")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(testAccount1)))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.email", is(testAccount1.getEmail())))
-                .andExpect(jsonPath("$.firstName", is(testAccount1.getFirstName())))
-                .andExpect(jsonPath("$.lastName", is(testAccount1.getLastName())));
-    }
-
-    @Test
     @WithMockUser(username = "test@example.com", roles = "SALESPERSON")
     void createAccount_AsSalespersonForOwnAccount_ShouldCreateAccount() throws Exception {
         mockMvc.perform(post("/api/accounts")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(testAccount1)))
-                .andExpect(status().isCreated())
+                        .content(objectMapper.writeValueAsString(createAccountDTO)))
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email", is(testAccount1.getEmail())));
-    }
-
-    @Test
-    @WithMockUser(username = "other@example.com", roles = "SALESPERSON")
-    void createAccount_AsSalespersonForOtherAccount_ShouldBeForbidden() throws Exception {
-        mockMvc.perform(post("/api/accounts")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(testAccount1)))
-                .andExpect(status().isForbidden());
     }
 
     @Test
     @WithMockUser(roles = "ADMIN")
     void updateAccount_AsAdmin_ShouldUpdateAccount() throws Exception {
         Account savedAccount = accountService.save(testAccount1);
-        savedAccount.setFirstName("Updated");
+        UpdateAccountDTO updateDto = getUpdateAccountDto(savedAccount);
 
         mockMvc.perform(put("/api/accounts/{id}", savedAccount.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(savedAccount)))
+                        .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName", is("Updated")));
+    }
+
+    private static UpdateAccountDTO getUpdateAccountDto(Account savedAccount) {
+        UpdateAccountDTO updateAccountDTO = new UpdateAccountDTO();
+        updateAccountDTO.setFirstName("Updated");
+        updateAccountDTO.setLastName(savedAccount.getLastName());
+        updateAccountDTO.setEmail(savedAccount.getEmail());
+        updateAccountDTO.setPhoneNumber(savedAccount.getPhoneNumber());
+        updateAccountDTO.setAccountStatus(AccountStatus.INACTIVE);
+        return updateAccountDTO;
     }
 
     @Test
     @WithMockUser(username = "test@example.com", roles = "SALESPERSON")
     void updateAccount_AsSalespersonOwningAccount_ShouldUpdateAccount() throws Exception {
         Account savedAccount = accountService.save(testAccount1);
-        savedAccount.setFirstName("Updated");
+        UpdateAccountDTO updateDto = getUpdateAccountDto(savedAccount);
 
         mockMvc.perform(put("/api/accounts/{id}", savedAccount.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(savedAccount)))
+                        .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName", is("Updated")));
     }
@@ -190,11 +189,11 @@ class AccountControllerIT {
     @WithMockUser(username = "other@example.com", roles = "SALESPERSON")
     void updateAccount_AsSalespersonNotOwningAccount_ShouldBeForbidden() throws Exception {
         Account savedAccount = accountService.save(testAccount1);
-        savedAccount.setFirstName("Updated");
+        UpdateAccountDTO updateDto = getUpdateAccountDto(savedAccount);
 
         mockMvc.perform(put("/api/accounts/{id}", savedAccount.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(savedAccount)))
+                        .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(status().isForbidden());
     }
 

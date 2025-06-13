@@ -1,4 +1,4 @@
-import {Box, Typography, List, ListItemButton, ListItemIcon, ListItemText, Badge, Divider} from '@mui/material';
+import {Box, Typography, List, ListItemButton, ListItemIcon, ListItemText, Divider} from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
 import FolderIcon from '@mui/icons-material/Folder';
 import BarChartIcon from '@mui/icons-material/BarChart';
@@ -53,7 +53,7 @@ export default function Sidebar() {
                         <ListItemText primary="Home"/>
                     </ListItemButton>
                     {user?.role !== UserRole.ADMIN && (
-                        <ListItemButton>
+                        <ListItemButton onClick={() => navigate('/my-clients')}>
                             <ListItemIcon><FolderIcon/></ListItemIcon>
                             <ListItemText primary="My Clients"/>
                         </ListItemButton>

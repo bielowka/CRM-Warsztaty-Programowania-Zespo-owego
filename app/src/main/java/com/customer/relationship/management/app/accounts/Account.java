@@ -1,6 +1,5 @@
 package com.customer.relationship.management.app.accounts;
 
-import com.customer.relationship.management.app.teams.Team;
 import com.customer.relationship.management.app.users.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -22,6 +21,7 @@ public class Account {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @Column(name = "first_name", nullable = false)
@@ -45,12 +45,15 @@ public class Account {
     private Company company;
 
     @OneToMany(mappedBy = "account")
+    @OrderBy("noteDate DESC")
     private List<Note> notes;
 
     @JsonManagedReference
     @OneToMany(mappedBy = "account")
+    @OrderBy("createdAt DESC")
     private List<Lead> leads;
 
     @OneToMany(mappedBy = "account")
+    @JsonIgnore
     private List<Task> tasks;
 }
