@@ -36,6 +36,7 @@ class AccountService {
             Company company = new Company();
             company.setName(createAccountDTO.getCompanyName());
             company.setIndustry(createAccountDTO.getIndustry());
+            company = companyRepository.save(company);
             account.setCompany(company);
         }
         return accountRepository.save(account);
