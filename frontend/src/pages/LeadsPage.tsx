@@ -25,6 +25,7 @@ const LeadsPage = () => {
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [selectedLeadId, setSelectedLeadId] = useState<number | null>(null);
     const [selectedLeadStatus, setSelectedLeadStatus] = useState<LeadStatus | null>(null);
+    const [selectedLeadValue, setSelectedLeadValue] = useState<number | null>(null);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
     const [sortOptions, setSortOptions] = useState<SortOptions>({
@@ -76,6 +77,7 @@ const LeadsPage = () => {
     const handleRowClick = (lead: any) => {
         setSelectedLeadId(lead.id);
         setSelectedLeadStatus(lead.status);
+        setSelectedLeadValue(lead.estimatedValue);
         setOpenEditDialog(true);
     };
 
@@ -178,9 +180,10 @@ const LeadsPage = () => {
                 <EditLeadStatusDialog
                     open={openEditDialog}
                     onClose={() => setOpenEditDialog(false)}
-                    onSave={(id, status) => handleStatusUpdate(id, status)}
+                    onSave={handleStatusUpdate}
                     leadId={selectedLeadId}
                     currentStatus={selectedLeadStatus}
+                    leadValue={selectedLeadValue || 0}
                 />
 
                 <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>

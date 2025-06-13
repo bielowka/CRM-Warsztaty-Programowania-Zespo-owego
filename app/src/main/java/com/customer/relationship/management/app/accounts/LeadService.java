@@ -1,5 +1,7 @@
 package com.customer.relationship.management.app.accounts;
 
+import com.customer.relationship.management.app.sales.Sale;
+import com.customer.relationship.management.app.sales.SaleRepository;
 import com.customer.relationship.management.app.users.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -16,10 +19,12 @@ public class LeadService {
 
     private final LeadRepository leadRepository;
     private final AccountRepository accountRepository;
+    private final SaleRepository saleRepository;
 
-    public LeadService(LeadRepository leadRepository, AccountRepository accountRepository) {
+    public LeadService(LeadRepository leadRepository, AccountRepository accountRepository, SaleRepository saleRepository) {
         this.leadRepository = leadRepository;
         this.accountRepository = accountRepository;
+        this.saleRepository = saleRepository;
     }
 
     @Transactional
@@ -62,6 +67,24 @@ public class LeadService {
 
         lead.setStatus(newStatus);
         leadRepository.save(lead);
+    }
+
+    @Transactional
+    public void closeLeadAndCreateSale(Long leadId, User currentUser) {
+        Lead lead = leadRepository.findById(leadId)
+                .orElseThrow(() -> new RuntimeException("Lead not found with id: " + leadId));
+
+        if (lead.getStatus() != LeadStatus.CLOSED_WON) {
+            throw new IllegalStateException("Can only create sale from a won lead");
+        }
+
+        Sale sale = new Sale();
+        sale.setSalesRep(currentUser);
+        sale.setAmount(lead.getEstimatedValue());
+        sale.setCloseDate(LocalDateTime.now());
+        saleRepository.save(sale);
+
+        leadRepository.delete(lead);
     }
 
     private Pageable createPageable(String sortBy, String sortDirection, int page, int size) {
