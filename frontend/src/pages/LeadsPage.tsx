@@ -3,29 +3,20 @@ import {
     Box,
     Typography,
     Button,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
     CircularProgress,
-    Chip,
     Snackbar,
     Alert,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import {useNavigate} from 'react-router-dom';
 import {useAuth} from '../context/AuthContext';
 import {UserRole} from '../types/UserRole';
-import {fetchLeads, createLead, updateLeadStatus, LeadStatus} from '../api/leadsApi';
+import {fetchLeads, createLead, updateLeadStatus, LeadStatus, SortOptions, PaginationOptions} from '../api/leadsApi';
 import {fetchMyAccounts} from '../api/accountsApi';
 import CreateLeadDialog from '../components/leads/CreateLeadDialog';
 import EditLeadStatusDialog from '../components/leads/EditLeadStatusDialog';
-import {formatCurrency} from '../utils/formatUtils';
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 import Sidebar from '../components/Sidebar.tsx';
+import LeadsTable from '../components/leads/LeadsTable';
 
 const LeadsPage = () => {
     const {user} = useAuth();
@@ -36,10 +27,18 @@ const LeadsPage = () => {
     const [selectedLeadStatus, setSelectedLeadStatus] = useState<LeadStatus | null>(null);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState('');
+    const [sortOptions, setSortOptions] = useState<SortOptions>({
+        sortBy: 'createdAt',
+        sortDirection: 'desc'
+    });
+    const [paginationOptions, setPaginationOptions] = useState<PaginationOptions>({
+        page: 0,
+        size: 10
+    });
 
-    const {data: leads, isLoading, error} = useQuery({
-        queryKey: ['leads', user?.role],
-        queryFn: () => fetchLeads(),
+    const {data: leadsResponse, isLoading, error} = useQuery({
+        queryKey: ['leads', user?.role, sortOptions, paginationOptions],
+        queryFn: () => fetchLeads(sortOptions, paginationOptions),
     });
 
     const {data: accounts} = useQuery({
@@ -84,32 +83,20 @@ const LeadsPage = () => {
         updateLeadStatusMutation.mutate({id, status});
     };
 
-    const getStatusColor = (status: LeadStatus) => {
-        switch (status) {
-            case LeadStatus.NEW:
-                return 'default';
-            case LeadStatus.QUALIFICATION:
-                return 'primary';
-            case LeadStatus.NEEDS_ANALYSIS:
-                return 'info';
-            case LeadStatus.VALUE_PROPOSITION:
-                return 'secondary';
-            case LeadStatus.ID_DECISION_MAKERS:
-                return 'warning';
-            case LeadStatus.PERCEPTION_ANALYSIS:
-                return 'warning';
-            case LeadStatus.PROPOSAL:
-                return 'info';
-            case LeadStatus.NEGOTIATION:
-                return 'secondary';
-            case LeadStatus.CLOSED_WON:
-                return 'success';
-            case LeadStatus.CLOSED_LOST:
-                return 'error';
-            default:
-                return 'default';
-        }
+    const handleSortChange = (newSortOptions: SortOptions) => {
+        setSortOptions(newSortOptions);
+        setPaginationOptions(prev => ({ ...prev, page: 0 }));
     };
+
+    const handlePaginationChange = (newPaginationOptions: PaginationOptions) => {
+        setPaginationOptions(newPaginationOptions);
+    };
+
+    const leads = leadsResponse?.content || [];
+    const pagination = leadsResponse ? {
+        totalPages: leadsResponse.totalPages,
+        totalElements: leadsResponse.totalElements
+    } : { totalPages: 0, totalElements: 0 };
 
     return (
         <Box sx={{display: 'flex'}}>
@@ -131,58 +118,26 @@ const LeadsPage = () => {
                 </Box>
 
                 {isLoading ? (
-                    <Box sx={{display: 'flex', justifyContent: 'center', mt: 4}}>
-                        <CircularProgress size={60}/>
+                    <Box sx={{display: 'flex', justifyContent: 'center', py: 5}}>
+                        <CircularProgress/>
                     </Box>
                 ) : error ? (
-                    <Box sx={{
-                        p: 3,
-                        backgroundColor: 'error.light',
-                        color: 'error.contrastText',
-                        borderRadius: 1,
-                        textAlign: 'center'
-                    }}>
-                        <Typography>Failed to load leads. Please try again later.</Typography>
-                    </Box>
+                    <Typography color="error">Failed to load leads</Typography>
                 ) : leads && leads.length > 0 ? (
-                    <TableContainer component={Paper} elevation={3}>
-                        <Table sx={{minWidth: 650}} aria-label="leads table">
-                            <TableHead sx={{backgroundColor: '#f5f7fa'}}>
-                                <TableRow>
-                                    <TableCell>Description</TableCell>
-                                    <TableCell>Status</TableCell>
-                                    <TableCell align="right">Estimated Value</TableCell>
-                                    <TableCell>Company</TableCell>
-                                    <TableCell>Industry</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {leads.map((lead: any) => (
-                                    <TableRow
-                                        key={lead.id}
-                                        hover
-                                        onClick={() => handleRowClick(lead)}
-                                        sx={{cursor: 'pointer', '&:hover': {backgroundColor: 'action.hover'}}}
-                                    >
-                                        <TableCell>
-                                            <Typography fontWeight="medium">{lead.description}</Typography>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Chip
-                                                label={lead.status}
-                                                color={getStatusColor(lead.status)}
-                                                variant="outlined"
-                                                size="small"
-                                            />
-                                        </TableCell>
-                                        <TableCell align="right">{formatCurrency(lead.estimatedValue)}</TableCell>
-                                        <TableCell>{lead.companyName || 'N/A'}</TableCell>
-                                        <TableCell>{lead.companyIndustry || 'N/A'}</TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                    <LeadsTable
+                        leads={leads}
+                        onRowClick={handleRowClick}
+                        showCompanyColumns={true}
+                        showDateColumns={true}
+                        showSortControls={true}
+                        showPaginationControls={true}
+                        sortOptions={sortOptions}
+                        onSortChange={handleSortChange}
+                        paginationOptions={paginationOptions}
+                        totalPages={pagination.totalPages}
+                        totalElements={pagination.totalElements}
+                        onPaginationChange={handlePaginationChange}
+                    />
                 ) : (
                     <Box sx={{
                         p: 5,
@@ -228,13 +183,8 @@ const LeadsPage = () => {
                     currentStatus={selectedLeadStatus}
                 />
 
-                <Snackbar
-                    open={snackbarOpen}
-                    autoHideDuration={3000}
-                    onClose={() => setSnackbarOpen(false)}
-                    anchorOrigin={{vertical: 'bottom', horizontal: 'center'}}
-                >
-                    <Alert severity="success" onClose={() => setSnackbarOpen(false)} sx={{width: '100%'}}>
+                <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={() => setSnackbarOpen(false)}>
+                    <Alert onClose={() => setSnackbarOpen(false)} severity="success">
                         {snackbarMessage}
                     </Alert>
                 </Snackbar>

@@ -9,6 +9,8 @@ import ReportsPage from "./pages/ReportsPage.tsx";
 import {Button, Typography} from "@mui/material";
 import {FC, JSX} from "react";
 import LeadsPage from "./pages/LeadsPage.tsx";
+import MyClientsPage from "./pages/MyClientsPage.tsx";
+import AccountDetailPage from "./pages/AccountDetailPage.tsx";
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({children}) => {
     const {isAuthenticated} = useAuth();
@@ -81,6 +83,11 @@ const App: FC = () => {
                             <LeadsPage/>
                         </ProtectedRoute>
                     }/>
+                    <Route path="/my-clients" element={
+                        <ProtectedRoute allowedRoles={[UserRole.SALESPERSON, UserRole.MANAGER]}>
+                            <MyClientsPage/>
+                        </ProtectedRoute>
+                    }/>
                     <Route
                         path="/users"
                         element={
@@ -97,6 +104,11 @@ const App: FC = () => {
                             </PrivateRoute>
                         }
                     />
+                    <Route path="/accounts/:accountId" element={
+                        <ProtectedRoute allowedRoles={[UserRole.SALESPERSON, UserRole.MANAGER, UserRole.ADMIN]}>
+                            <AccountDetailPage/>
+                        </ProtectedRoute>
+                    }/>
                 </Routes>
             </Router>
         </AuthProvider>

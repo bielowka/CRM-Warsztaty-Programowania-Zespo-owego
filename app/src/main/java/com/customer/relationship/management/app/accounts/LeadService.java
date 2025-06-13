@@ -1,6 +1,10 @@
 package com.customer.relationship.management.app.accounts;
 
 import com.customer.relationship.management.app.users.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,13 +42,17 @@ public class LeadService {
     }
 
     @Transactional(readOnly = true)
-    public List<Lead> getLeadsByUser(User user) {
-        return leadRepository.findByAccountUser(user);
+    public LeadPageResponse getLeadsByUser(User user, String sortBy, String sortDirection, int page, int size) {
+        Pageable pageable = createPageable(sortBy, sortDirection, page, size);
+        Page<Lead> leadPage = leadRepository.findByAccountUser(user, pageable);
+        return createLeadPageResponse(leadPage);
     }
 
     @Transactional(readOnly = true)
-    public List<Lead> getAllLeads() {
-        return leadRepository.findAll();
+    public LeadPageResponse getAllLeads(String sortBy, String sortDirection, int page, int size) {
+        Pageable pageable = createPageable(sortBy, sortDirection, page, size);
+        Page<Lead> leadPage = leadRepository.findAll(pageable);
+        return createLeadPageResponse(leadPage);
     }
 
     @Transactional
@@ -56,4 +64,60 @@ public class LeadService {
         leadRepository.save(lead);
     }
 
+    private Pageable createPageable(String sortBy, String sortDirection, int page, int size) {
+        Sort sort = createSort(sortBy, sortDirection);
+        return PageRequest.of(page, size, sort);
+    }
+
+    private LeadPageResponse createLeadPageResponse(Page<Lead> leadPage) {
+        List<LeadDTO> dtoList = leadPage.getContent().stream().map(lead -> {
+            String companyName = null;
+            String companyIndustry = null;
+
+            if (lead.getAccount() != null && lead.getAccount().getCompany() != null) {
+                companyName = lead.getAccount().getCompany().getName();
+                companyIndustry = lead.getAccount().getCompany().getIndustry();
+            }
+
+            return new LeadDTO(
+                    lead.getId(),
+                    lead.getDescription(),
+                    lead.getStatus(),
+                    lead.getEstimatedValue(),
+                    companyName,
+                    companyIndustry,
+                    lead.getCreatedAt(),
+                    lead.getUpdatedAt()
+            );
+        }).toList();
+
+        return new LeadPageResponse(
+                dtoList,
+                leadPage.getNumber(),
+                leadPage.getSize(),
+                leadPage.getTotalElements(),
+                leadPage.getTotalPages()
+        );
+    }
+
+    private Sort createSort(String sortBy, String sortDirection) {
+        String mappedSortBy = mapSortField(sortBy);
+        
+        Sort.Direction direction = "desc".equalsIgnoreCase(sortDirection) 
+            ? Sort.Direction.DESC 
+            : Sort.Direction.ASC;
+            
+        return Sort.by(direction, mappedSortBy);
+    }
+
+    private String mapSortField(String sortBy) {
+        return switch (sortBy.toLowerCase()) {
+            case "createdat", "created_at", "created" -> "createdAt";
+            case "updatedat", "updated_at", "updated" -> "updatedAt";
+            case "description" -> "description";
+            case "status" -> "status";
+            case "estimatedvalue", "estimated_value", "value" -> "estimatedValue";
+            default -> "id";
+        };
+    }
 }
