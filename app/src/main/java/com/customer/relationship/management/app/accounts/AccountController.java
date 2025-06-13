@@ -11,6 +11,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/accounts")
@@ -50,24 +51,21 @@ class AccountController {
     }
 
     @PostMapping
-    @PreAuthorize("@accountSecurity.canCreateAccount(authentication, #account)")
-    public ResponseEntity<Account> createAccount(@Valid @RequestBody Account account) {
+    @PreAuthorize("hasRole('SALESPERSON')")
+    public ResponseEntity<Account> createAccount(@Valid @RequestBody CreateAccountDTO createAccountDTO) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
-        userRepository.findByEmail(email)
-                .ifPresent(account::setUser);
-        return ResponseEntity.ok(accountService.save(account));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return ResponseEntity.ok(accountService.createAccount(createAccountDTO, user));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("@accountSecurity.canAccessAccount(authentication, #id)")
-    public ResponseEntity<Account> updateAccount(@PathVariable Long id, @Valid @RequestBody Account account) {
-        return accountService.findById(id)
-                .map(existing -> {
-                    account.setUser(existing.getUser());
-                    account.setId(id);
-                    return ResponseEntity.ok(accountService.save(account));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Account> updateAccount(@PathVariable Long id, @Valid @RequestBody UpdateAccountDTO updateAccountDTO) {
+        Optional<Account> existingAccount = accountService.findById(id);
+        return existingAccount.map(account -> ResponseEntity.ok(accountService.updateAccount(account, updateAccountDTO)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
