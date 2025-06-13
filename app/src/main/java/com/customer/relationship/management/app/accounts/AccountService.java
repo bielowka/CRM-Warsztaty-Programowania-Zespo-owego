@@ -1,6 +1,7 @@
 package com.customer.relationship.management.app.accounts;
 
 import com.customer.relationship.management.app.users.User;
+import com.customer.relationship.management.app.teams.Team;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -77,5 +78,9 @@ class AccountService {
 
     public List<Account> getAccountsByUser(User user) {
         return accountRepository.findByUser(user);
+    }
+
+    public List<Account> getAccountsByTeam(Team team) {
+        return accountRepository.findByUserTeam(team);
     }
 }

@@ -35,3 +35,8 @@ export const fetchMyAccounts = async (): Promise<Account[]> => {
     const response = await api.get(`api/accounts/my`);
     return response.data;
 };
+
+export const fetchTeamAccounts = async (): Promise<Account[]> => {
+    const response = await api.get(`api/accounts/team`);
+    return response.data;
+};

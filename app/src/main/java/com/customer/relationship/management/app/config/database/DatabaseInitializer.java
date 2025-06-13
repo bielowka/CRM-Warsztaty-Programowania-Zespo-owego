@@ -49,7 +49,6 @@ public class DatabaseInitializer implements CommandLineRunner {
                 createUser("Jan", "Kowalski", "jan@example.com", "password123", UserRole.ADMIN, "CEO"),
                 createUser("Anna", "Nowak", "anna@example.com", "password123", UserRole.SALESPERSON, "Sales"),
                 createUser("Piotr", "Zieliński", "piotr@example.com", "password123", UserRole.SALESPERSON, "Sales"),
-                createUser("Kasia", "Wiśniewska", "kasia@example.com", "password123", UserRole.MANAGER, "Marketing Manager"),
                 createUser("Tomek", "Lis", "tomek@example.com", "password123", UserRole.SALESPERSON, "IT"),
                 createUser("Ewa", "Malinowska", "ewa@example.com", "password123", UserRole.SALESPERSON, "HR"),
                 createUser("Marek", "Mazur", "marek@example.com", "password123", UserRole.SALESPERSON, "Logistics"),
@@ -123,6 +122,10 @@ public class DatabaseInitializer implements CommandLineRunner {
 
 
         userRepository.saveAll(users);
+
+        User teamALphaMamager = createUser("Kasia", "Wiśniewska", "kasia@example.com", "password123", UserRole.MANAGER, "Marketing Manager");
+        teamALphaMamager.setTeam(teamAlpha);
+        userRepository.save(teamALphaMamager);
     }
 
     private User createUser(String firstName, String lastName, String email, String password, UserRole role, String position) {

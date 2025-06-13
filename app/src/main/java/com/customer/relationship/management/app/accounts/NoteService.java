@@ -1,6 +1,7 @@
 package com.customer.relationship.management.app.accounts;
 
 import com.customer.relationship.management.app.users.User;
+import com.customer.relationship.management.app.users.UserRole;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +25,8 @@ public class NoteService {
         Account account = accountRepository.findById(createNoteDTO.getAccountId())
                 .orElseThrow(() -> new RuntimeException("Account not found"));
 
-        if (!account.getUser().getId().equals(currentUser.getId())) {
-            throw new SecurityException("You can only add notes to your own accounts");
+        if (!canAccessAccount(account, currentUser)) {
+            throw new SecurityException("You can only add notes to accounts you have access to");
         }
 
         Note note = new Note();
@@ -42,8 +43,8 @@ public class NoteService {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
 
-        if (!account.getUser().getId().equals(currentUser.getId())) {
-            throw new SecurityException("You can only view notes for your own accounts");
+        if (!canAccessAccount(account, currentUser)) {
+            throw new SecurityException("You can only view notes for accounts you have access to");
         }
 
         Sort sort = Sort.by(Sort.Direction.DESC, "noteDate");
@@ -55,8 +56,8 @@ public class NoteService {
         Note note = noteRepository.findById(noteId)
                 .orElseThrow(() -> new RuntimeException("Note not found"));
 
-        if (!note.getAccount().getUser().getId().equals(currentUser.getId())) {
-            throw new SecurityException("You can only edit notes from your own accounts");
+        if (!canAccessAccount(note.getAccount(), currentUser)) {
+            throw new SecurityException("You can only edit notes from accounts you have access to");
         }
 
         if (updateNoteDTO.getContent() != null) {
@@ -77,10 +78,18 @@ public class NoteService {
         Note note = noteRepository.findById(noteId)
                 .orElseThrow(() -> new RuntimeException("Note not found"));
 
-        if (!note.getAccount().getUser().getId().equals(currentUser.getId())) {
-            throw new SecurityException("You can only delete notes from your own accounts");
+        if (!canAccessAccount(note.getAccount(), currentUser)) {
+            throw new SecurityException("You can only delete notes from accounts you have access to");
         }
 
         noteRepository.delete(note);
+    }
+
+    private boolean canAccessAccount(Account account, User currentUser) {
+        if (currentUser.getRole() == UserRole.MANAGER) {
+            return account.getUser().getTeam() != null && 
+                   account.getUser().getTeam().equals(currentUser.getTeam());
+        }
+        return account.getUser().getId().equals(currentUser.getId());
     }
 } 

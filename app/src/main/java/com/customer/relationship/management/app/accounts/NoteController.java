@@ -23,7 +23,7 @@ public class NoteController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('SALESPERSON')")
+    @PreAuthorize("hasRole('SALESPERSON') or hasRole('MANAGER')")
     public ResponseEntity<NoteDTO> createNote(
             @RequestBody CreateNoteDTO createNoteDTO,
             Authentication authentication) {
@@ -36,7 +36,7 @@ public class NoteController {
     }
 
     @GetMapping("/account/{accountId}")
-    @PreAuthorize("hasRole('SALESPERSON')")
+    @PreAuthorize("hasRole('SALESPERSON') or hasRole('MANAGER')")
     public ResponseEntity<List<NoteDTO>> getNotesByAccount(
             @PathVariable Long accountId,
             Authentication authentication) {
@@ -53,7 +53,7 @@ public class NoteController {
     }
 
     @PutMapping("/{noteId}")
-    @PreAuthorize("hasRole('SALESPERSON')")
+    @PreAuthorize("hasRole('SALESPERSON') or hasRole('MANAGER')")
     public ResponseEntity<NoteDTO> updateNote(
             @PathVariable Long noteId,
             @RequestBody UpdateNoteDTO updateNoteDTO,
@@ -67,7 +67,7 @@ public class NoteController {
     }
 
     @DeleteMapping("/{noteId}")
-    @PreAuthorize("hasRole('SALESPERSON')")
+    @PreAuthorize("hasRole('SALESPERSON') or hasRole('MANAGER')")
     public ResponseEntity<Void> deleteNote(
             @PathVariable Long noteId,
             Authentication authentication) {
