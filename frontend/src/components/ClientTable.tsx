@@ -15,21 +15,18 @@ interface Props {
     data: Client[];
     onDelete: (client: Client) => void;
     onEdit: (client: Client) => void;
+    onRowClick: (client: Client) => void;
 }
 
 const columnHelper = createColumnHelper<Client>();
 
-export default function ClientTable({ data, onDelete, onEdit }: Props) {
+export default function ClientTable({ data, onDelete, onEdit, onRowClick }: Props) {
     const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 8 });
 
     const columns = [
         columnHelper.accessor('firstName', { header: 'First Name' }),
         columnHelper.accessor('lastName', { header: 'Last Name' }),
         columnHelper.accessor('email', { header: 'Email' }),
-        columnHelper.accessor(client => client.user?.email || '', {
-            id: 'userEmail',
-            header: 'Assigned User',
-        }),
         columnHelper.accessor(client => client.company?.name || '', {
             id: 'companyName',
             header: 'Company',
@@ -46,14 +43,20 @@ export default function ClientTable({ data, onDelete, onEdit }: Props) {
                         <IconButton
                             size="small"
                             sx={{ color: 'black' }}
-                            onClick={() => onEdit(client)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onEdit(client);
+                            }}
                         >
                             <EditIcon fontSize="small" />
                         </IconButton>
                         <IconButton
                             size="small"
                             sx={{ color: 'black' }}
-                            onClick={() => onDelete(client)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onDelete(client);
+                            }}
                         >
                             <DeleteIcon fontSize="small" />
                         </IconButton>
@@ -107,9 +110,10 @@ export default function ClientTable({ data, onDelete, onEdit }: Props) {
                         <Box
                             component="tr"
                             key={row.id}
+                            onClick={() => onRowClick(row.original)}
                             sx={{
                                 '&:nth-of-type(odd)': { backgroundColor: '#fafafa' },
-                                '&:hover': { backgroundColor: '#f0f0f0' },
+                                '&:hover': { backgroundColor: '#f0f0f0', cursor: 'pointer' },
                             }}
                         >
                             {row.getVisibleCells().map(cell => (

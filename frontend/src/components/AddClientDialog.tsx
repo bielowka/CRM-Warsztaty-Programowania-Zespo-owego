@@ -16,6 +16,7 @@ interface Props {
         lastName: string;
         email: string;
         phoneNumber: string;
+        companyName?: string;
     }) => void;
 }
 
@@ -24,7 +25,8 @@ export default function AddClientDialog({ open, onClose, onSubmit }: Props) {
         firstName: '',
         lastName: '',
         email: '',
-        phoneNumber: ''
+        phoneNumber: '',
+        companyName: ''
     });
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -34,7 +36,8 @@ export default function AddClientDialog({ open, onClose, onSubmit }: Props) {
             firstName: '',
             lastName: '',
             email: '',
-            phoneNumber: ''
+            phoneNumber: '',
+            companyName: ''
         });
     };
 
@@ -91,6 +94,15 @@ export default function AddClientDialog({ open, onClose, onSubmit }: Props) {
                         value={formData.phoneNumber}
                         onChange={handleChange}
                         required
+                    />
+                    <TextField
+                        margin="dense"
+                        name="companyName"
+                        label="Company Name"
+                        type="text"
+                        fullWidth
+                        value={formData.companyName}
+                        onChange={handleChange}
                     />
                 </DialogContent>
                 <DialogActions>

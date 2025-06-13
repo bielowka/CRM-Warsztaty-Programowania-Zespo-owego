@@ -17,11 +17,7 @@ export interface Account {
     email: string;
     phoneNumber: string;
     accountStatus: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
-    company?: {
-        id: number;
-        name: string;
-        industry: string;
-    };
+    companyName?: string;
     leads?: Lead[];
     notes?: Note[];
 }
