@@ -1,6 +1,9 @@
 package com.customer.relationship.management.app.config.database;
 
 import com.customer.relationship.management.app.accounts.*;
+import com.customer.relationship.management.app.leads.Lead;
+import com.customer.relationship.management.app.leads.LeadRepository;
+import com.customer.relationship.management.app.leads.LeadStatus;
 import com.customer.relationship.management.app.sales.Sale;
 import com.customer.relationship.management.app.sales.SaleRepository;
 import com.customer.relationship.management.app.teams.Team;

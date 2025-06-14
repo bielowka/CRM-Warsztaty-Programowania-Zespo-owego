@@ -1,5 +1,7 @@
-package com.customer.relationship.management.app.accounts;
+package com.customer.relationship.management.app.leads;
 
+import com.customer.relationship.management.app.accounts.Account;
+import com.customer.relationship.management.app.accounts.AccountRepository;
 import com.customer.relationship.management.app.sales.Sale;
 import com.customer.relationship.management.app.sales.SaleRepository;
 import com.customer.relationship.management.app.users.User;

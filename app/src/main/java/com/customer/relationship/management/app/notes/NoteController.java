@@ -1,5 +1,6 @@
-package com.customer.relationship.management.app.accounts;
+package com.customer.relationship.management.app.notes;
 
+import com.customer.relationship.management.app.accounts.UpdateNoteDTO;
 import com.customer.relationship.management.app.users.User;
 import com.customer.relationship.management.app.users.UserRepository;
 import org.springframework.http.HttpStatus;

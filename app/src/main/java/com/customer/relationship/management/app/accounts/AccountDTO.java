@@ -10,6 +10,7 @@ public class AccountDTO {
     private String email;
     private String phoneNumber;
     private String companyName;
+    private String accountStatus;
 
     public AccountDTO(Account account) {
         this.id = account.getId();
@@ -18,5 +19,6 @@ public class AccountDTO {
         this.email = account.getEmail();
         this.phoneNumber = account.getPhoneNumber();
         this.companyName = account.getCompany() != null ? account.getCompany().getName() : null;
+        this.accountStatus = account.getAccountStatus() != null ? account.getAccountStatus().name() : null;
     }
 }

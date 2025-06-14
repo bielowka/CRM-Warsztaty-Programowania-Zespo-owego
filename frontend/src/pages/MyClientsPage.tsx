@@ -138,7 +138,7 @@ const MyClientsPage: React.FC = () => {
         email: account.email,
         phoneNumber: account.phoneNumber,
         accountStatus: account.accountStatus,
-        user: { id: 0, email: '', firstName: '', lastName: '', role: 'SALESPERSON' }, // not used in table so not loading this
+        user: { id: 0, email: '', firstName: '', lastName: '', role: 'SALESPERSON' },
         address: { street: '', city: '', state: '', zipCode: '' },
         company: account.companyName ? { name: account.companyName, industry: '' } : undefined
     })) || [];

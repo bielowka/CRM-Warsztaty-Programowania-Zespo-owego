@@ -1,5 +1,6 @@
-package com.customer.relationship.management.app.accounts;
+package com.customer.relationship.management.app.leads;
 
+import com.customer.relationship.management.app.accounts.Account;
 import com.customer.relationship.management.app.users.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

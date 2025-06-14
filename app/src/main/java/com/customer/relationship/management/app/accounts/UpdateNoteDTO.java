@@ -1,5 +1,6 @@
 package com.customer.relationship.management.app.accounts;
 
+import com.customer.relationship.management.app.notes.NoteType;
 import lombok.Getter;
 import lombok.Setter;
 
