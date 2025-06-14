@@ -1,5 +1,7 @@
 package com.customer.relationship.management.app.accounts;
 
+import com.customer.relationship.management.app.leads.Lead;
+import com.customer.relationship.management.app.notes.Note;
 import com.customer.relationship.management.app.users.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;

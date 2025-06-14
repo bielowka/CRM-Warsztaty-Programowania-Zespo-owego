@@ -1,5 +1,8 @@
-package com.customer.relationship.management.app.accounts;
+package com.customer.relationship.management.app.leads;
 
+import lombok.Getter;
+
+@Getter
 public enum LeadStatus {
     NEW("Nowy"),
     QUALIFICATION("Kwalifikacja"),
@@ -18,7 +21,4 @@ public enum LeadStatus {
         this.displayName = displayName;
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
 }

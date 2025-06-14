@@ -1,4 +1,4 @@
-package com.customer.relationship.management.app.accounts;
+package com.customer.relationship.management.app.leads;
 
 import lombok.Getter;
 import lombok.Setter;

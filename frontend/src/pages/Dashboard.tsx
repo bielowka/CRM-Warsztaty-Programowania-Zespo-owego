@@ -25,28 +25,28 @@ const Dashboard: React.FC = () => {
         <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 3 }}>
           <Paper sx={{ padding: 3 }}>
             <Typography variant="h6" gutterBottom>
-              Lorem ipsum
+              {/*Lorem ipsum*/}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              {/*Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.*/}
             </Typography>
           </Paper>
 
           <Paper sx={{ padding: 3 }}>
             <Typography variant="h6" gutterBottom>
-              Lorem ipsum
+              {/*Lorem ipsum*/}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              {/*Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.*/}
             </Typography>
           </Paper>
 
           <Paper sx={{ padding: 3 }}>
             <Typography variant="h6" gutterBottom>
-              Lorem ipsum
+              {/*Lorem ipsum*/}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              {/*Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.*/}
             </Typography>
           </Paper>
         </Box>
